@@ -1,1 +1,0 @@
-sbatch --array=1-200 -p sched_mit_darwin2 --exclusive --time=12:00:00 job2.sh
