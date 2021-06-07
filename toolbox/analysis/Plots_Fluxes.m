@@ -195,4 +195,90 @@ for a = 1:numel(strEco_idx)
 end
 
 
+%% Nitrogen assimilation pathways
+
+load(FullSolution_L2.FileNames.PanGEM_Path)
+
+% asparagine synthase, co2/nh3 ligase, glutamine synthase, glutamine
+% hydrolase (should be rev), glut:NADP oxidoreductase, selenocystathionine
+% lyase (BS!), alanine oxidoreductase
+N_rxns = [{'R00485'},{'R00149'},{'R00253'},{'R00256'},{'R00248'},{'R04930'},{'R00396'}]
+
+for a = 1:numel(N_rxns)
+    N_rxns_idx(a) = find(strcmp(N_rxns{a},PanGEM.rxns));
+end
+
+% let's try the population first
+
+dim1 = ceil(sqrt(numel(N_rxns)));
+figure
+for a = 1:numel(N_rxns)
+    subplot(dim1,dim1,a)
+    imagesc(x,y,abs(1e9*PopulationSolution.Fluxes(:,:,N_rxns_idx(a))))
+    colorbar
+    title(N_rxns{a})
+end
+
+
+% now a strain
+str = 'SS120'
+str_idx = find(strcmp(str,Gridding.strNameVec));
+
+figure
+for a = 1:numel(N_rxns)
+    subplot(dim1,dim1,a)
+    z = abs(StrainSolution.Fluxes(:,:,N_rxns_idx(a),str_idx))
+    imagesc(x,y,z)
+    colorbar
+    title(N_rxns{a})
+end
+
+
+% who is using GDH?
+for a = 1:Gridding.nStr
+    GDH_sum(a) = nansum(nansum(StrainSolution.Fluxes(:,:,N_rxns_idx(5),a)));
+end
+
+Gridding.strNameVec(find(GDH_sum))
+
+str = 'MIT1306'
+str_idx1 = find(strcmp(str,Gridding.strNameVec));
+
+figure
+subplot(1,3,1)
+z = abs(StrainSolution.Fluxes(:,:,N_rxns_idx(3),str_idx1))
+imagesc(x,y,z)
+colorbar
+subplot(1,3,2)
+z = abs(StrainSolution.Fluxes(:,:,N_rxns_idx(5),str_idx1))
+imagesc(x,y,z)
+colorbar
+subplot(1,3,3)
+z = abs(StrainSolution.Fluxes(:,:,N_rxns_idx(5),str_idx1)) ./ abs(StrainSolution.Fluxes(:,:,find(strcmp('AmmoniaTRANS',PanGEM.rxns)),str_idx1))
+imagesc(x,y,z)
+colorbar
+
+
+%% PEPCKase in MIT9314 and SB
+load(FullSolution_L2.FileNames.PanGEM_Path)
+
+PEPCKase_idx = find(strcmp('R00346',PanGEM.rxns));
+RUBISCO_idx = find(strcmp('R00024',PanGEM.rxns));
+
+str1 = 'MIT9314';
+str_idx1 = find(strcmp(str1,Gridding.strNameVec));
+
+str2 = 'SB';
+str_idx2 = find(strcmp(str2,Gridding.strNameVec));
+
+figure
+subplot(2,1,1)
+z = StrainSolution.Fluxes(:,:,PEPCKase_idx,str_idx1);
+imagesc(x,y,z)
+colorbar
+subplot(2,1,2)
+z = StrainSolution.Fluxes(:,:,PEPCKase_idx,str_idx2);
+imagesc(x,y,z)
+colorbar
+
 

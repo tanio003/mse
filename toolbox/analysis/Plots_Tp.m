@@ -82,6 +82,26 @@ xlabel('Ammonia [nM]')
 set(gca,'FontSize',20)
 legend('Ambient','S^*')
 
+% prettied up one for the SI figs
+figure
+subplot(2,1,1)
+z = PopulationSolution.S_star(:,:,1);
+z(find(~z)) = NaN;
+imagesc(x,y,1e6*z)
+set(gca,'clim',[0 80])
+xlabel('Latitude')
+ylabel('Depth')
+set(gca,'FontSize',20)
+hc = colorbar
+ylabel(hc,'S^* [nM]')
+colormap('jet')
+subplot(2,1,2)
+hb = bar(binRange,[hcc;hcs]',0.8)
+xlabel('Ammonia [nM]')
+set(gca,'FontSize',20)
+legend('Ambient','S^*')
+
+
 
 %% Diffusion limitation
 

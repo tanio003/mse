@@ -93,7 +93,8 @@ strIdx(2) = find(strcmp(str2,Gridding.strNameVec));
 
 
 figure
-z = 100*(StrainSolution.Growth(:,:,strIdx(1)) - 1.2*StrainSolution.Growth(:,:,strIdx(2))) ./ nanmean(StrainSolution.Growth(:,:,strIdx),3);
+z = 100*(StrainSolution.Growth(:,:,strIdx(1)) - StrainSolution.Growth(:,:,strIdx(2))) ./ nanmean(StrainSolution.Growth(:,:,strIdx),3);
+% D = 1.2; %str2
 %z = 100*(StrainSolution.StrMod4_growth(:,:,strIdx(1)) - StrainSolution.StrMod4_growth(:,:,strIdx(2))) ./ nanmean(StrainSolution.StrMod4_growth(:,:,strIdx),3);
 z(:,28) = NaN;
 imagesc(CruiseData.Lat(Gridding.stationsVec2),Gridding.depthVec,z);
@@ -250,18 +251,18 @@ set(gca,'FontSize',20)
 
 
 
-% a1 = axes;
-% h1 = imagesc(x,y,z_norm_N);
-% colormap(a1,'pink');
-% c1 = colorbar;
-% axis image
-% 
-% hold on
-% a2 = axes;
-% h2 = imagesc(x,y,z_norm_E);
-% colormap(a2,'gray');
-% c2 = colorbar;
-% axis image
+%% Table of strain GEM statistics
+
+for a = 1:Gridding.nStr
+    load(strcat('Users/jrcasey/Documents/MATLAB/GitHub/PanGEM/data/models/strains/',Gridding.strNameVec{a},'.mat'))
+    colSum = sum(abs(full(model.S)),1);
+    rowSum = sum(abs(full(model.S)),2);
+    nRxns(a) = numel(find(colSum));
+    nMets(a) = numel(find(rowSum));
+    nGenes(a) = numel(model.genes);
+end
+
+
 
 
 

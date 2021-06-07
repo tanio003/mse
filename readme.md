@@ -30,8 +30,9 @@ Dependencies: [RAVEN 2.0](https://github.com/SysBioChalmers/RAVEN/wiki)\*, [Mose
 1. Clone the repository to a local directory (using your SSH key): `git clone git@github.com:jrcasey/mse.git`
 2. Add to MATLAB path: `addpath(genpath(path/to/mse/));`
 3. MSE is typically run in batch. Start by specifying paths and other options with the script `toolbox/wrappers/BatchSetup.m` 
-4. The outer wrapper for running MSE is the script `toolbox/wrappers/mse.m`. This wrapper is called by the shell script `job2.sh`, which is in turn called by the SLURM array loop `Job_loop.sh`. OR, if you would just like to run a batch locally, you can edit the `sbatch --array` line in Job_loop.sh to store the variable `SLURM_ARRAY_TASK_ID`, which is read by `mse.m`. 
+4. The outer wrapper for running MSE is the script `toolbox/wrappers/mse.m`. This wrapper is called by the shell script `job2.sh`, which is in turn called by the SLURM array loop `Job_loop.sh`. OR, if you would just like to run a batch locally, you can edit the `sbatch --array` line in Job_loop.sh to store the variable `SLURM_ARRAY_TASK_ID`, which is read by `mse.m`. OR, if you just want to run a single simulation, use the function `/toolbox/wrappers/runMSE.m`
 
 *\*You will need to sign up for a free academic license for Mosek. Not painless, unfortunately. If you plan to run mse_AMT on a cluster, you will need to install on the server, place the license in the Mosek directory, and make sure the solver is working by running the included test `test/mosekdiag.m`. Also, please be sure to check for any licensing requirements with Mosek before installing on a server.*
 
+Please send me your [feedback](https://jrcasey.github.io/)! 
 
