@@ -11,7 +11,8 @@ close all
 
 %% Change directory
 % change this path to where you have MSE installed
-rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
+% rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
+rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
 cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
@@ -32,7 +33,7 @@ nIterations = size(idxMat,1).*size(idxMat,2).*size(idxMat,3); % use this number 
 
 % get job array index (comment out if running the missing set; see below)
 job_array_idx = str2num(getenv('SLURM_ARRAY_TASK_ID'));
-
+job_array_idx = 642;
 % locate coordinates
 [a,b,c] = ind2sub(size(idxMat),job_array_idx);
 station_idx = a;
@@ -58,6 +59,8 @@ load(strcat('data/GEM/StrMod/',strName,'.mat'));
 
 envDat = getEnvVars(CruiseData,station_idx,depth_idx);
 
+%% To runMSE manually
+model = mod; % 
 %% Run MSE
 
 tic
@@ -74,7 +77,8 @@ Solution.station = Gridding.stationsVec{station_idx};
 %save(cell2str(FileNames.destination_fileName),'FullSolution');
 
 % save on server
-save(strcat('/nobackup1/jrcasey/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
+% save(strcat('/nobackup1/jrcasey/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
+save(strcat('/Users/tatsurotanioka/Desktop/Project/mse/scratch/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
 
 
 

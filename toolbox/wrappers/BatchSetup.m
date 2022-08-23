@@ -25,7 +25,7 @@ close all
 
 %% Change directory
 % change this path to where you have MSE installed
-rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
+rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
 cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
