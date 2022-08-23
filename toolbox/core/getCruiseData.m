@@ -11,29 +11,33 @@ for i = 1:nStations
     station_ind{i} = find(strcmp(uStations{i},Data.Station));
 end
 
-% Interpolate (linear)
-CruiseDat = struct;
-CruiseDat.Stations = uStations;
-CruiseDat.Depth = depthVec;
-for i = 1:nStations
-    for j = 1:numel(varNames) 
-        clear x v vq
-        x = Data.Depth(station_ind{i});
-        v = Data.(varNames{j})(station_ind{i});
-        % deal with the nans
-        nanInd = find(isnan(v));
-        x(nanInd) = [];
-        v(nanInd) = [];
-        if numel(find(~isnan(v)))<3
-            CruiseDat.(varNames{j})(i,:) = zeros(numel(depthVec),1);
-        else
-        vq = interp1(x,v,depthVec,'linear');
-        CruiseDat.(varNames{j})(i,:) = vq;
+% Interpolate (linear) if multiple depth is given
+if numel(depthVec) > 1;
+    CruiseDat = struct;
+    CruiseDat.Stations = uStations;
+    CruiseDat.Depth = depthVec;
+    for i = 1:nStations
+        for j = 1:numel(varNames) 
+            clear x v vq
+            x = Data.Depth(station_ind{i});
+            v = Data.(varNames{j})(station_ind{i});
+            % deal with the nans
+            nanInd = find(isnan(v));
+            x(nanInd) = [];
+            v(nanInd) = [];
+            if numel(find(~isnan(v)))<3
+                CruiseDat.(varNames{j})(i,:) = zeros(numel(depthVec),1);
+            else
+            vq = interp1(x,v,depthVec,'linear');
+            CruiseDat.(varNames{j})(i,:) = vq;
+            end
         end
+        CruiseDat.Lat(i) = Data.Lat(station_ind{i}(1));
+        CruiseDat.Lon(i) = Data.Lon(station_ind{i}(1));
+        CruiseDat.Date(i) = Data.Date(station_ind{i}(1));
     end
-    CruiseDat.Lat(i) = Data.Lat(station_ind{i}(1));
-    CruiseDat.Lon(i) = Data.Lon(station_ind{i}(1));
-    CruiseDat.Date(i) = Data.Date(station_ind{i}(1));
+elseif numel(depthVec) == 1; % No interpolation if only surface data is given
+    CruiseDat = table2struct(CruiseDB,"ToScalar",true);
 end
 
 % Change some units to nM

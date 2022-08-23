@@ -43,11 +43,15 @@ for i = 1:numel(Data);
     V(isnan(V)) = 0;
     Xq = linspace(minDepth,maxDepth,numel(depthVec));
     %Yq = linspace(348,804,numel(348:bandWidth:804));
-    Yq = linspace(minLambda,maxLambda,numel(lambdaVec));
-
+    Yq = linspace(minLambda,maxLambda,numel(lambdaVec));        
     [Xq2,Yq2] = ndgrid(Xq,Yq);
-    F = griddedInterpolant(Xg2,Yg2,V,'linear','none');
-    zi = F(Xq2,Yq2);
+    if numel(X) == 1;   % When there's only 1 depth
+        F = griddedInterpolant(Yg2,V,'linear','none');
+        zi = F(Yq2);
+    elseif numel(X) > 1; % When there's multiple depth
+        F = griddedInterpolant(Xg2,Yg2,V,'linear','none');
+        zi = F(Xq2,Yq2);
+    end
     Data2{i} = zi;
 end
 
