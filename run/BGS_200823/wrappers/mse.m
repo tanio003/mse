@@ -13,17 +13,22 @@ close all
 % change this path to where you have MSE installed
 % rootPath = '/Users/jrcasey/Documents/MATLAB/GitHub/MSE_Standalone';
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-cd(rootPath)
+runID = 'BGS_200823';                         
+runPath = strcat(rootPath,'/run/',runID);
+
 % make sure the toolbox is in Matlab's path
-addpath(genpath(rootPath));
+toolboxPath = '/Users/tatsurotanioka/Desktop/Project/mse/toolbox';
+addpath(genpath(toolboxPath));
+% Remove default data path
+rmpath(strcat(rootPath,'/data'));
 
 %% Load data
 % These files are generated in BatchSetup.m
-
-load FileNames
-load Gridding
-load Options
-load CruiseData
+cd(runPath)
+load('data/output/FileNames.mat')
+load('data/output/Gridding.mat')
+load('data/output/Options.mat')
+load('data/output/CruiseData.mat')
 
 %% Get SLURM index
 
@@ -33,7 +38,7 @@ nIterations = size(idxMat,1).*size(idxMat,2).*size(idxMat,3); % use this number 
 
 % get job array index (comment out if running the missing set; see below)
 job_array_idx = str2num(getenv('SLURM_ARRAY_TASK_ID'));
-job_array_idx = 642;
+job_array_idx = 7866;
 % locate coordinates
 [a,b,c] = ind2sub(size(idxMat),job_array_idx);
 station_idx = a;
@@ -78,7 +83,7 @@ Solution.station = Gridding.stationsVec{station_idx};
 
 % save on server
 % save(strcat('/nobackup1/jrcasey/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
-save(strcat('/Users/tatsurotanioka/Desktop/Project/mse/scratch/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
+save(strcat(runPath,'/data/output/Solution/Solution_',num2str(job_array_idx),'.mat'),'Solution');
 
 
 

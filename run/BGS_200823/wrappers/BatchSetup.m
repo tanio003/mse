@@ -91,8 +91,11 @@ Options.fmax = 0.085; % maximum coverage of cell surface area by transporters (p
 Gridding = struct;
 % Stations to include in batch run (select IN cruise)
 metadata_GOSHIP = readtable('/Users/tatsurotanioka/Desktop/Project/BioGOSHIP_MetaPanGEM/EnvData/Metadata_merged/BioGOSHIP_Metadata_INPROGRESS_merged_mse.csv');
-Gridding.stationsVec = metadata_GOSHIP.Station(1:242)'; % station names
-Gridding.stationsVec2 = [1:242]; % corresponding station indices (in CruiseData)
+metadata_GOSHIP_select = rmmissing(metadata_GOSHIP,'DataVariables',...
+    {'Temp','Orthophosphate','NitratePlusNitrite','Nitrite','Ammonium'});
+
+Gridding.stationsVec = metadata_GOSHIP_select.Station(1:114)'; % station names
+Gridding.stationsVec2 = [1:114]; % corresponding station indices (in CruiseData)
 Gridding.nStations = numel(Gridding.stationsVec);
 % Gridding.stationsVec =[{'A13_03'},{'A13_06'},{'A13_08'},{'A13_11'}, ...
 %     {'A13_13'},{'A13_15'},{'A13_16'},{'A13_19'},{'A13_22'},{'A13_25'}, ...
@@ -143,10 +146,10 @@ CruiseData = getCruiseData(CruiseDB,Gridding.stationsVec, Gridding.depthVec);
 % load and format HyperPro profiles
 load(FileNames.IrrDat_fileName);
 IrrDat = IrrDat_BioGOSHIP;
-[IrrDat2] = standardizeIrr(IrrDat,Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
+[IrrDat2] = standardizeIrr(IrrDat,Gridding.stationsVec, Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
 IrrDat3 = reshape([IrrDat2{:}],numel(Gridding.depthVec),numel(Gridding.lambdaVec),numel(IrrDat2));
 CruiseData.IrrDat = IrrDat3;
-CruiseData.PAR = squeeze(nansum(IrrDat3,2))';
+CruiseData.PAR = squeeze(nansum(IrrDat3,2));
 
 %% Parse strain models and save to data/GEM/StrMod/ folder
 

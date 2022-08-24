@@ -5,7 +5,7 @@ Data = CruiseDB;
 
 varNames = Data.Properties.VariableNames(6:end); % just the nutrients for now
 % Find and index stations
-uStations = unique(CruiseStations);
+uStations = unique(CruiseStations, 'stable');
 nStations = numel(uStations);
 for i = 1:nStations
     station_ind{i} = find(strcmp(uStations{i},Data.Station));
