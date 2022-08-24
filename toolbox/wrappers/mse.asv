@@ -16,7 +16,7 @@ rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
 cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
-
+rmpath('/Users/tatsurotanioka/Desktop/Project/mse'
 %% Load data
 % These files are generated in BatchSetup.m
 
@@ -33,7 +33,7 @@ nIterations = size(idxMat,1).*size(idxMat,2).*size(idxMat,3); % use this number 
 
 % get job array index (comment out if running the missing set; see below)
 job_array_idx = str2num(getenv('SLURM_ARRAY_TASK_ID'));
-job_array_idx = 5;
+job_array_idx = 1;
 % locate coordinates
 [a,b,c] = ind2sub(size(idxMat),job_array_idx);
 station_idx = a;

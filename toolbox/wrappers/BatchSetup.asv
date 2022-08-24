@@ -26,15 +26,10 @@ close all
 %% Change directory
 % change this path to where you have MSE installed
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-% cd(rootPath)
+cd(rootPath)
 % make sure the toolbox is in Matlab's path
 addpath(genpath(rootPath));
-
-% change this path to where data and wradppers for specific run is stored
-runID = 'BGS_200823';                         
-runPath = strcat(rootPath,'/run/',runID);
-cd(runPath)
-
+rmpath('/Users/tatsurotanioka/Desktop/Project/mse/run');
 %% Version
 version = strcat({'_v'},datestr(date,'yyyymmdd'))
 
@@ -53,9 +48,9 @@ FileNames.strainList_Path = 'data/db/strainList.mat';
 % Current OGTDat
 FileNames.OGTDat_Path = 'data/db/OGTDat.csv';
 % Cruise data
-FileNames.CruiseDB_filename = 'data/envData/BioGOSHIP_Metadata_INPROGRESS_mse.csv';
+FileNames.CruiseDB_filename = 'data/envData/AMT13_Gridded2.csv';
 % HyperPro profiles
-FileNames.IrrDat_fileName = 'data/envData/IrrDat_BioGOSHIP.mat';
+FileNames.IrrDat_fileName = 'data/envData/IrrDat.mat';
 % TpDat path
 FileNames.TpDat_fileName = 'data/db/TpDat.csv';
 % PhysOpt and PigOpt constraints path
@@ -63,8 +58,8 @@ FileNames.PhysOptPigOptConstraints_fileName = 'data/db/BOFConstraints.csv';
 % PigDB path
 FileNames.PigDB_fileName = 'data/db/AbsorptionDatabase.csv';
 % Destination for solution
-% FileNames.destination_fileName = strcat('nobackups/jrcasey/Solution',version,'.mat');
-FileNames.destination_fileName = strcat(runPath,'/Solution', version, '.mat');
+FileNames.destination_fileName = strcat('nobackups/jrcasey/Solution',version,'.mat');
+
 %% Save and output options
 
 Options = struct;
@@ -84,31 +79,20 @@ Options.fmax = 0.085; % maximum coverage of cell surface area by transporters (p
 %% Gridding (save a copy of this to the server)
 
 Gridding = struct;
-% Stations to include in batch run (select IN cruise)
-metadata_GOSHIP = readtable('/Users/tatsurotanioka/Desktop/Project/BioGOSHIP_MetaPanGEM/EnvData/Metadata_merged/BioGOSHIP_Metadata_INPROGRESS_merged.csv');
-% Gridding.stationsVec = metadata_GOSHIP.SampleID(1:245)'; % station names
-Gridding.stationsVec = [{'IN017','IN018','IN020','IN021'}, ...
-    {}]
-Gridding.stationsVec2 = [1:245]; % corresponding station indices (in CruiseData)
-Gridding.nStations = numel(Gridding.stationsVec);
-% Gridding.stationsVec =[{'A13_03'},{'A13_06'},{'A13_08'},{'A13_11'}, ...
-%     {'A13_13'},{'A13_15'},{'A13_16'},{'A13_19'},{'A13_22'},{'A13_25'}, ...
-%     {'A13_28'},{'A13_31'},{'A13_32'},{'A13_35'},{'A13_38'},{'A13_41'}, ...
-%     {'A13_42'},{'A13_45'},{'A13_48'},{'A13_51'},{'A13_54'},{'A13_57'}, ...
-%     {'A13_60'},{'A13_63'},{'A13_66'},{'A13_68'},{'A13_69'},{'A13_72'}, ...
-%     {'A13_75'},{'A13_76'},{'A13_77'},{'A13_78'}]; % station names
-% Gridding.stationsVec2 = [2 4 5 7 8 9 10 12 15 17 19 21 22 24 26 ...
-%     28 29 31 33 35 37 39 41 43 45 46 47 49 51 52 53 54]; % corresponding station indices (in CruiseData)
+% Stations to include in batch run
+Gridding.stationsVec =[{'A13_03'},{'A13_06'},{'A13_08'},{'A13_11'}, ...
+    {'A13_13'},{'A13_15'},{'A13_16'},{'A13_19'},{'A13_22'},{'A13_25'}, ...
+    {'A13_28'},{'A13_31'},{'A13_32'},{'A13_35'},{'A13_38'},{'A13_41'}, ...
+    {'A13_42'},{'A13_45'},{'A13_48'},{'A13_51'},{'A13_54'},{'A13_57'}, ...
+    {'A13_60'},{'A13_63'},{'A13_66'},{'A13_68'},{'A13_69'},{'A13_72'}, ...
+    {'A13_75'},{'A13_76'},{'A13_77'},{'A13_78'}]; % station names
+Gridding.stationsVec2 = [2 4 5 7 8 9 10 12 15 17 19 21 22 24 26 ...
+    28 29 31 33 35 37 39 41 43 45 46 47 49 51 52 53 54]; % corresponding station indices (in CruiseData)
 Gridding.nStations = numel(Gridding.stationsVec);
 % Depth (m)
-% Gridding.minZ = 10; % minimum depth
-% Gridding.maxZ = 200; % maximum depth
-% Gridding.intervalZ = 10; % depth interval
-% Gridding.depthVec = Gridding.minZ:Gridding.intervalZ:Gridding.maxZ;
-% Gridding.nZ = numel(Gridding.depthVec);
-Gridding.minZ = 5; % minimum depth
-Gridding.maxZ = 5; % maximum depth
-Gridding.intervalZ = 5; % depth interval
+Gridding.minZ = 10; % minimum depth
+Gridding.maxZ = 200; % maximum depth
+Gridding.intervalZ = 10; % depth interval
 Gridding.depthVec = Gridding.minZ:Gridding.intervalZ:Gridding.maxZ;
 Gridding.nZ = numel(Gridding.depthVec);
 % Wavelength (nm)
@@ -134,7 +118,7 @@ Gridding.nStr = numel(Gridding.strNameVec);
 % variables
 
 CruiseDB = readtable(FileNames.CruiseDB_filename,'Delimiter',',','ReadVariableNames',true);
-CruiseData = getCruiseData(CruiseDB,Gridding.depthVec);
+CruiseData = getCruiseData(CruiseDB,GriddGridding.depthVec);
 
 %% Import spectral irradiance
 % load and format HyperPro profiles

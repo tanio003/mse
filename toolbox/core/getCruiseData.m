@@ -1,11 +1,11 @@
-function CruiseDat = getCruiseData(CruiseDB, depthVec)
+function CruiseDat = getCruiseData(CruiseDB, CruiseStations, depthVec)
 %% Standardize AMT Data
 
 Data = CruiseDB;
 
 varNames = Data.Properties.VariableNames(6:end); % just the nutrients for now
 % Find and index stations
-uStations = unique(Data.Station);
+uStations = unique(CruiseStations);
 nStations = numel(uStations);
 for i = 1:nStations
     station_ind{i} = find(strcmp(uStations{i},Data.Station));
