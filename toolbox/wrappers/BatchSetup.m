@@ -123,7 +123,7 @@ CruiseData = getCruiseData(CruiseDB,Gridding.stationsVec, Gridding.depthVec);
 %% Import spectral irradiance
 % load and format HyperPro profiles
 load(FileNames.IrrDat_fileName);
-[IrrDat2] = standardizeIrr(IrrDat,Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
+[IrrDat2] = standardizeIrr(IrrDat,Gridding.stationsVec, Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
 IrrDat3 = reshape([IrrDat2{:}],numel(Gridding.depthVec),numel(Gridding.lambdaVec),numel(IrrDat2));
 CruiseData.IrrDat = IrrDat3;
 CruiseData.PAR = squeeze(nansum(IrrDat3,2))';

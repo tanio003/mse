@@ -1,4 +1,4 @@
-function [IrrDat2] = standardizeIrr(IrrDat,lambdaVec,depthVec)
+function [IrrDat2] = standardizeIrr(IrrDat,CruiseStations,lambdaVec,depthVec)
 %% Process HyperPro data from cast dimensions to standardized dimensions
 % Transforms a hyperpro profile from native dimensions to standard
 % dimensions
@@ -29,8 +29,15 @@ minDepth = min(depthVec);
 maxDepth = max(depthVec);
 depthInterval = (maxDepth - minDepth)/(numel(depthVec)-1);
 
-Data = IrrDat.Data;
+% Data = IrrDat.Data;
 
+% Find and index stations
+uStations = unique(CruiseStations);
+nStations = numel(uStations);
+for i = 1:nStations
+    station_ind{i} = find(strcmp(uStations{i},IrrDat.Station));
+    Data(i) = IrrDat.Data(station_ind{i});
+end
 
 for i = 1:numel(Data);
     clear X Xg Y Yg Xg2 Yg2 V Xq Yq Xq2 Yq2 F zi
