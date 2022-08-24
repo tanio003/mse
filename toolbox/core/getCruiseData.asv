@@ -11,11 +11,11 @@ for i = 1:nStations
     station_ind{i} = find(strcmp(uStations{i},Data.Station));
 end
 
-CruiseDat = struct;
-CruiseDat.Stations = uStations;
-CruiseDat.Depth = depthVec;
 % Interpolate (linear) if multiple depth is given
 if numel(depthVec) > 1;
+    CruiseDat = struct;
+    CruiseDat.Stations = uStations;
+    CruiseDat.Depth = depthVec;
     for i = 1:nStations
         for j = 1:numel(varNames) 
             clear x v vq
@@ -37,13 +37,11 @@ if numel(depthVec) > 1;
         CruiseDat.Date(i) = Data.Date(station_ind{i}(1));
     end
 elseif numel(depthVec) == 1; % No interpolation if only surface data is given
+    CruiseDat = table2struct(CruiseDB,"ToScalar",true);
     for i = 1:nStations
         for j = 1:numel(varNames) 
-            CruiseDat.(varNames{j})(i,:) = Data.(varNames{j})(station_ind{i});
+            CruiseDat.(varNames{j})(i,:) = 
         end
-            CruiseDat.Lat(i) = Data.Lat(station_ind{i}(1));
-            CruiseDat.Lon(i) = Data.Lon(station_ind{i}(1));
-            CruiseDat.Date(i) = Data.Date(station_ind{i}(1));
     end
 end
 

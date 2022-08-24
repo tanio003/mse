@@ -137,7 +137,7 @@ Gridding.nStr = numel(Gridding.strNameVec);
 % variables
 
 CruiseDB = readtable(FileNames.CruiseDB_filename,'Delimiter',',','ReadVariableNames',true);
-CruiseData = getCruiseData(CruiseDB,Gridding.depthVec);
+CruiseData = getCruiseData(CruiseDB,Gridding.stationsVec, Gridding.depthVec);
 
 %% Import spectral irradiance
 % load and format HyperPro profiles

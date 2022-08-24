@@ -78,7 +78,7 @@ Solution.station = Gridding.stationsVec{station_idx};
 
 % save on server
 % save(strcat('/nobackup1/jrcasey/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
-save(strcat('/Users/tatsurotanioka/Desktop/Project/mse/data/output/','Solution_',num2str(job_array_idx),'.mat'),'Solution');
+save(strcat('/Users/tatsurotanioka/Desktop/Project/mse/data/output/Solutions','Solution_',num2str(job_array_idx),'.mat'),'Solution');
 
 
 

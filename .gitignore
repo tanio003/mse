@@ -3,3 +3,6 @@ FullSolution_L1.mat
 FullSolution_L2.mat
 .DS_Store
 mosek.lic
+
+run/
+data/output/*.mat
