@@ -3,7 +3,7 @@ function CruiseDat = getCruiseData(CruiseDB, CruiseStations, depthVec)
 
 Data = CruiseDB;
 
-varNames = Data.Properties.VariableNames(6:end); % just the nutrients for now
+varNames = Data.Properties.VariableNames(7:end); % just the nutrients for now
 % Find and index stations
 uStations = unique(CruiseStations, 'stable');
 nStations = numel(uStations);

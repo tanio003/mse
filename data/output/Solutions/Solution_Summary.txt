@@ -1,0 +1,222 @@
+Solutions from test runs with default AMT12 data
+
+ID = 644
+            Growth: 0.0510
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.1354e+03 193.4338 1.4612 1.4611]
+             r_opt: 0.3150
+            pigAbs: [223.1927 122.5626 183.8501 345.7552]
+      uptakeBounds: [0.3441 0.5182 0.1978 0.0705]
+            S_star: [4.0794e-05 2.6983e-05 1.5459e-04 1.2861e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0868
+    StrMod3_growth: 0.0411
+    StrMod4_growth: 0.0695
+    StrMod5_growth: 0.0510
+           runtime: 56.7893
+           strName: 'AS9601'
+                 z: 10
+           station: 'A13_13'
+
+ID = 644
+            Growth: 0.0448
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.1114e+03 214.0706 1.3594 1.4259]
+             r_opt: 0.3150
+            pigAbs: [201.2862 112.5991 166.7070 313.8851]
+      uptakeBounds: [0.3261 0.4903 0.4154 0.0882]
+            S_star: [4.2193e-05 2.7908e-05 1.5989e-04 1.3302e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0868
+    StrMod3_growth: 0.0389
+    StrMod4_growth: 0.0659
+    StrMod5_growth: 0.0448
+           runtime: 48.2224
+           strName: 'AS9601'
+                 z: 10
+           station: 'A13_11'
+
+ID = 642 
+            Growth: 0.0302
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.0891e+03 235.3921 0.2295 0.2295]
+             r_opt: 0.3150
+            pigAbs: [183.4507 102.3877 151.6899 285.8384]
+      uptakeBounds: [0.2972 0.3779 0.4160 0.0759]
+            S_star: [4.8366e-05 3.1991e-05 1.8328e-04 1.5248e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0868
+    StrMod3_growth: 0.0355
+    StrMod4_growth: 0.0600
+    StrMod5_growth: 0.0302
+           runtime: 46.1510
+           strName: 'AS9601'
+                 z: 10
+           station: 'A13_06'
+
+ID = 641 (where AS9601 starts) 
+            Growth: 0.0189
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.0920e+03 237.4544 0.3886 0.3229]
+             r_opt: 0.3150
+            pigAbs: [180.4112 101.7418 150.2844 282.1530]
+      uptakeBounds: [0.2276 0.2115 0.3753 0.0960]
+            S_star: [5.0104e-05 3.3141e-05 1.8986e-04 1.5796e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0868
+    StrMod3_growth: 0.0272
+    StrMod4_growth: 0.0461
+    StrMod5_growth: 0.0189
+           runtime: 71.3083
+           strName: 'AS9601'
+                 z: 10
+           station: 'A13_03'
+
+ID = 34
+            Growth: 0.0513
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.0995e+03 227.1695 2.4409 0.4969]
+             r_opt: 0.3150
+            pigAbs: [132.2959 208.6020 127.5662 161.9999]
+      uptakeBounds: [0.2977 0.3783 0.3891 0.0648]
+            S_star: [4.3493e-05 2.9465e-05 1.6678e-04 1.3876e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0355
+    StrMod4_growth: 0.0579
+    StrMod5_growth: 0.0513
+           runtime: 213.4437
+           strName: 'SS120'
+                 z: 20
+           station: 'A13_06'
+
+ID = 33
+            Growth: 0.0623
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.0656e+03 245.4670 1.9557 10.1085]
+             r_opt: 0.3150
+            pigAbs: [130.9234 206.4349 103.3622 148.7972]
+      uptakeBounds: [0.3774 0.2057 0.4371 0.1006]
+            S_star: [4.5533e-05 3.0847e-05 1.7460e-04 1.4527e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0450
+    StrMod4_growth: 0.0734
+    StrMod5_growth: 0.0623
+           runtime: 130.3951
+           strName: 'SS120'
+                 z: 20
+           station: 'A13_03'
+
+ID = 5 (Something wrong with Temp correction for this particular clade = LLII/LLIII? Relative growth rate drops of too steeply above threshold)
+            Growth: NaN
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [15×1 double]
+             TpOpt: [5×1 double]
+             r_opt: NaN
+            pigAbs: [4×1 double]
+      uptakeBounds: [4×1 double]
+            S_star: [4×1 double]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0407
+    StrMod4_growth: 0.0664
+    StrMod5_growth: 0
+           runtime: 127.4223
+           strName: 'SS120'
+                 z: 10
+           station: 'A13_13'
+
+ID = 4 (Something wrong with Temp correction for this particular clade = LLII/LLIII? Relative growth rate drops of too steeply above threshold)
+            Growth: NaN
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [15×1 double]
+             TpOpt: [5×1 double]
+             r_opt: NaN
+            pigAbs: [4×1 double]
+      uptakeBounds: [4×1 double]
+            S_star: [4×1 double]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0391
+    StrMod4_growth: 0.0637
+    StrMod5_growth: 0
+           runtime: 99.2740
+           strName: 'SS120'
+                 z: 10
+           station: 'A13_11'
+
+ID = 3
+            Growth: 0.0446
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.1433e+03 189.5170 0.3243 0.3174]
+             r_opt: 0.3150
+            pigAbs: [292.2741 417.8381 234.8724 298.2942]
+      uptakeBounds: [0.2781 0.4296 0.6335 0.0712]
+            S_star: [4.2058e-05 2.8492e-05 1.6128e-04 1.3418e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0332
+    StrMod4_growth: 0.0541
+    StrMod5_growth: 0.0446
+           runtime: 86.4808
+           strName: 'SS120'
+                 z: 10
+           station: 'A13_08'
+ID = 2
+            Growth: 0.0512
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3150 3.1022e+03 225.7509 0.9895 1.0201]
+             r_opt: 0.3150
+            pigAbs: [281.0049 401.3210 257.8249 305.0402]
+      uptakeBounds: [0.2979 0.3810 0.4177 0.0762]
+            S_star: [4.3238e-05 2.9292e-05 1.6580e-04 1.3794e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0355
+    StrMod4_growth: 0.0579
+    StrMod5_growth: 0.0512
+           runtime: 86.0048
+           strName: 'SS120'
+                 z: 10
+           station: 'A13_06'
+
+ID = 1
+            Growth: 0.0367
+            Fluxes: [1484×1 double]
+            Shadow: [1282×1 double]
+         BOF_coefs: [1×15 double]
+             TpOpt: [0.3205 3.1216e+03 151.3292 42.5002 0.3100]
+             r_opt: 0.3205
+            pigAbs: [277.9733 396.5442 147.1977 276.0456]
+      uptakeBounds: [0.2174 0.2064 0.3457 0.0904]
+            S_star: [4.6082e-05 3.1158e-05 1.7651e-04 1.4685e-04]
+    StrMod1_growth: 0.0787
+    StrMod2_growth: 0.0727
+    StrMod3_growth: 0.0259
+    StrMod4_growth: 0.0423
+    StrMod5_growth: 0.0367
+           runtime: 95.8744
+           strName: 'SS120'
+                 z: 10
+           station: 'A13_03'
+
+

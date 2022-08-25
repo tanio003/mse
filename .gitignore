@@ -4,5 +4,5 @@ FullSolution_L2.mat
 .DS_Store
 mosek.lic
 
-run/
+run
 data/output/*.mat
