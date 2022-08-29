@@ -40,7 +40,7 @@ if Options.ecotypeweighted
     Abundace_table = [HLI_frac;HLII_frac;HLIII_IV_frac;LLI_frac;LLII_III_frac;LLIV_frac];
     OGT = 273.15 + dot(Abundace_table, OGTDat.OGT);  % K
 else
-    OGT = 273.15 + OGTDat.OGT(SampleInd); % K
+    OGT = 273.15 + OGTDat.OGT(ecotypeInd); % K
 end
 %% Arrhenius parameters
 
