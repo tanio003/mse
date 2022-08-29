@@ -39,9 +39,9 @@ if Options.ecotypeweighted
     HLI_frac = CruiseDatabase.HLI(SampleInd);
     HLII_frac = CruiseDatabase.HLII(SampleInd);
     HLIII_IV_frac = CruiseDatabase.HLIII_IV(SampleInd);
-    LLI_frac = CruiseData.LLI(SampleInd);
-    LLII_III_frac = CruiseData.LLII_III(SampleInd);
-    LLIV_frac = CruiseData.LLIV(SampleInd);
+    LLI_frac = CruiseDatabase.LLI(SampleInd);
+    LLII_III_frac = CruiseDatabase.LLII_III(SampleInd);
+    LLIV_frac = CruiseDatabase.LLIV(SampleInd);
     Abundace_table = [HLI_frac;HLII_frac;HLIII_IV_frac;LLI_frac;LLII_III_frac;LLIV_frac];
 end
 
