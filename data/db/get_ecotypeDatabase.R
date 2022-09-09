@@ -63,6 +63,9 @@ ecotypeDatabase <- rbind(ecotypeDatabase,orgDatabase_HLIII_IV)
 ecotypeDatabase <- ecotypeDatabase %>% 
   dplyr::arrange(Ecotype)
 
+ecotypeDatabase$Ecotype <- gsub('HLIII_HLIV','HLIII_IV', ecotypeDatabase$Ecotype)
+ecotypeDatabase$Ecotype <- gsub('LLII_LLIII','LLII_III', ecotypeDatabase$Ecotype)
+
 write.csv(ecotypeDatabase,
           "~/Desktop/Project/mse/data/db/ecotypeDatabase.csv",
           quote = FALSE,
