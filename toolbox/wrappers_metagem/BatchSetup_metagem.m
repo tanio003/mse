@@ -141,7 +141,7 @@ metadata_GOSHIP_select = metadata_GOSHIP(ismember(metadata_GOSHIP.Cruise, Cruise
 Gridding.stationsVec = metadata_GOSHIP_select.Station'; % station names
 Gridding.stationsVec2 = find(ismember(metadata_GOSHIP.Cruise, Cruises_select)); % corresponding station indices (in CruiseData)
 Gridding.nStations = numel(Gridding.stationsVec);
-Gridding.nStations = numel(Gridding.stationsVec);
+Gridding.Cruise = metadata_GOSHIP_select.Cruise;
 % Depth (m)
 % Gridding.minZ = 10; % minimum depth
 % Gridding.maxZ = 200; % maximum depth
