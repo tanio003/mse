@@ -21,5 +21,5 @@ if nargin<2
 end
 
 [model rxns]=addExchangeRxns(model,'out',mets);
-produced=haveFlux(model,10^-5,rxns);
+produced=haveFlux(model,10^-6,rxns);
 end

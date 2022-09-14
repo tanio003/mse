@@ -2,7 +2,7 @@ clear
 close all
 
 %% run MSE
-% Runs MSE either in batch (SLURM array index) or locally
+% Runs MSE either in batch (SLURM array) or locally
 % This script serves as a wrapper for runMSE, and is currently set up to
 % run on a cluster. 
 
