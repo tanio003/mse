@@ -5,6 +5,8 @@ STEP=1
 RUNDIR="BGS_200826c"
 
 cd /Users/tatsurotanioka/Desktop/Project/mse/run/$RUNDIR/wrappers
+matlab -nodesktop -nodisplay -r "BatchSetup_metagem;quit;"
+
 for i in $(seq $START $STEP $END) ; do	
 	let input=$i
 	echo $input
