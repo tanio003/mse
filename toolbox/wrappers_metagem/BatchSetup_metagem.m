@@ -194,7 +194,7 @@ CruiseData.PAR = squeeze(nansum(IrrDat3,2));
 %% Parse sample GEM models and save to data/GEM/StrMod/ folder
 load(FileNames.StrMod_Path);
 load(FileNames.SampleMod_Path);
-delete('data/GEM/StrMod/*.mat')
+delete(strcat(runPath,'data/GEM/StrMod/*.mat'));
 for a = 1:Gridding.nStr
      strName = Gridding.strNameVec{a};
      if Options.samplespecific
