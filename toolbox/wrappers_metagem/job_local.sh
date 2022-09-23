@@ -4,7 +4,7 @@ END=303
 STEP=1
 RUNDIR="BGS_200826c"
 
-cd /Users/tatsurotanioka/Desktop/Project/mse/run/BGS_200826c/wrappers
+cd /Users/tatsurotanioka/Desktop/Project/mse/run/$RUNDIR/wrappers
 for i in $(seq $START $STEP $END) ; do	
 	let input=$i
 	echo $input
