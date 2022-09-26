@@ -23,6 +23,7 @@ addpath(genpath(toolboxPath));
 
 % Remove default data and wrapper path
 rmpath(strcat(toolboxPath,'/wrappers'));
+rmpath(strcat(toolboxPath,'/wrappers_metagem'));
 
 %% Load data
 % These files are generated in BatchSetup.m
