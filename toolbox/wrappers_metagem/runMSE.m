@@ -79,7 +79,7 @@ a = nansum(PigDat .* repmat(squeeze(EdSpec)',1,nPigs) .* Gridding.bandwidth); % 
 if Options.samplespecific
     [physOptLP] = getPhysOptLP_metagem(StrMod3, FileNames,Constraints, a, PigsIncluded, Options.maxIter_physOpt);
 else
-    [physOptLP] = getPhysOptLP(StrMod3,Constraints, a, PigsIncluded, Options.maxIter_physOpt);
+    [physOptLP] = getPhysOptLP(StrMod3,FileNames,Constraints, a, PigsIncluded, Options.maxIter_physOpt);
 end
 % Solve LP
 [xOut,fval,exitflag,output] = fmincon(physOptLP);
