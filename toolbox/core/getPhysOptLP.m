@@ -1,4 +1,4 @@
-function [physOptLP] = getPhysOptLP(StrMod, Constraints, a, PigsIncluded, maxIter)
+function [physOptLP] = getPhysOptLP(StrMod, FileNames,Constraints, a, PigsIncluded, maxIter)
 
 %% Set up physOpt and pigOpt LP
 
@@ -22,7 +22,8 @@ end
 
 % Get ecotype index
 strName = StrMod.id;
-fileName = 'data/db/orgDatabase.csv';
+% fileName = 'data/db/orgDatabase.csv';
+fileName = FileNames.orgDB_Path;
 orgDatabase = readtable(fileName,'ReadVariableNames',true,'Delimiter',',');
 orgInd = find(contains(orgDatabase.StrainName,strName));
 ecotype = orgDatabase.Ecotype{orgInd};
