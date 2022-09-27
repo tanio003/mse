@@ -5,12 +5,12 @@
 
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_200826';                         
+runID = 'BGS_220923g';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
 FullSolution = FullSolution_L2;
-
+load(strcat(runPath,'/data/output/Options.mat'))
 %% Parse out Gridding, CruiseData, FileNames, and PanGEM from FullSolution
 Gridding = FullSolution.Gridding;
 CruiseData = FullSolution.CruiseData;
@@ -19,24 +19,45 @@ CruiseData = FullSolution.CruiseData;
 [PopulationSolution] = parseBGSSolutions(FullSolution);
 
 %% Gridded domain
-x = CruiseData.Lat(Gridding.stationsVec2);
+x = CruiseData.Lat;
 y = Gridding.depthVec;
 
 %% Latitude versus production,growth rate at surface
 mkdir(strcat(runPath,'/Figures/Growth'))
-for a = 1:Gridding.nStations
-    zVec = Gridding.depthVec;
-    % prodVec = 1e3 .* PopulationSolution.Fluxes(:,a,find(strcmp('R00024',FullSolution.PanGEM.rxns))); % mol m-3 h-1
-    prodVec = PopulationSolution.Fluxes(:,find(strcmp('R00024',FullSolution.PanGEM.rxns)),a); % mmol m-3 h-1
-    % biomassVec = 1e6 * CruiseData.Pro(Gridding.stationsVec2(a),:)' .* ( (4/3) .* pi() .* ((PopulationSolution.r_opt(:,a)).^3) .* 280 .* 1e-15 .* (1/12.011)); % mol m-3
-    % prodInt(a) = trapz(zVec,prodVec);
-    prodInt(a) = zVec.*prodVec;
-    % biomassInt(a) = trapz(zVec,biomassVec);
+if ~Options.samplespecific
+    prodInt = zeros(Gridding.nStations,3);
+    for a = 1:3;
+        zVec = Gridding.depthVec;
+        % prodVec = 1e3 .* PopulationSolution.Fluxes(:,a,find(strcmp('R00024',FullSolution.PanGEM.rxns))); % mol m-3 h-1
+        prodVec = PopulationSolution.Fluxes(:,find(strcmp('R00024',FullSolution.PanGEM.rxns)),a); % mmol m-3 h-1
+        % biomassVec = 1e6 * CruiseData.Pro(Gridding.stationsVec2(a),:)' .* ( (4/3) .* pi() .* ((PopulationSolution.r_opt(:,a)).^3) .* 280 .* 1e-15 .* (1/12.011)); % mol m-3
+        % prodInt(a) = trapz(zVec,prodVec);
+        prodInt(:,a) = prodVec.*zVec;
+        % biomassInt(a) = trapz(zVec,biomassVec);
+    end
+else
+    for a = 1:Gridding.nStations
+        zVec = Gridding.depthVec;
+        % prodVec = 1e3 .* PopulationSolution.Fluxes(:,a,find(strcmp('R00024',FullSolution.PanGEM.rxns))); % mol m-3 h-1
+        prodVec = PopulationSolution.Fluxes(:,find(strcmp('R00024',FullSolution.PanGEM.rxns)),a); % mmol m-3 h-1
+        % biomassVec = 1e6 * CruiseData.Pro(Gridding.stationsVec2(a),:)' .* ( (4/3) .* pi() .* ((PopulationSolution.r_opt(:,a)).^3) .* 280 .* 1e-15 .* (1/12.011)); % mol m-3
+        % prodInt(a) = trapz(zVec,prodVec);
+        prodInt(a) = zVec.*prodVec;
+        % biomassInt(a) = trapz(zVec,biomassVec);
+    end
 end
 
 % latitude versus GPP 
 fig = figure
-plot(CruiseData.Lat(Gridding.stationsVec2), prodInt,'.k','MarkerSize',20)
+if ~Options.samplespecific
+    for a = 1:3;
+        scatter(CruiseData.Lat, prodInt(:,a),'filled')
+        hold on
+    end
+    legend('MED4','AS9601','GP2','Location','northeastoutside');
+else
+    plot(CruiseData.Lat, prodInt,'.k','MarkerSize',20)
+end
 xlabel('Latitude')
 ylabel('GPP [mmol C m^-^2 h^-^1]')
 set(gca,'FontSize',20);
@@ -46,7 +67,15 @@ saveas(fig,fileName,'epsc');
 
 % latitude versus Growth rate
 fig = figure
-plot(CruiseData.Lat(Gridding.stationsVec2), PopulationSolution.Growth,'.k','MarkerSize',20)
+if ~Options.samplespecific
+    for a = 1:3;
+        scatter(CruiseData.Lat, PopulationSolution.Growth(:,a),'filled')
+        hold on
+    end
+        legend('MED4','AS9601','GP2','Location','northeastoutside');
+else
+    plot(CruiseData.Lat, PopulationSolution.Growth,'.k','MarkerSize',20)
+end
 xlabel('Latitude')
 ylabel('Growth rate [h^-^1]')
 set(gca,'FontSize',20);
@@ -55,14 +84,39 @@ fileName = strcat(runPath,'/Figures/Growth/BGS_Lat_mu.eps');
 saveas(fig,fileName,'epsc');
 
 % GPP versus Growth Rate 
-
 fig = figure
-plot(prodInt, PopulationSolution.Growth,'.k','MarkerSize',20)
+if ~Options.samplespecific
+    for a = 1:3;
+        scatter(prodInt(:,a), PopulationSolution.Growth(:,a),'filled')
+        hold on
+    end
+    legend('MED4','AS9601','GP2','Location','northeastoutside');
+else
+    plot(prodInt, PopulationSolution.Growth,'.k','MarkerSize',20)
+end
 xlabel('GPP [mmol C m^-^2 h^-^1]')
 ylabel('Growth rate [h^-^1]')
 set(gca,'FontSize',20);
 
 fileName = strcat(runPath,'/Figures/Growth/BGS_Prod_mu.eps');
+saveas(fig,fileName,'epsc');
+
+% PAR versus Growth rate
+fig = figure
+if ~Options.samplespecific
+    for a = 1:3;
+        scatter(CruiseData.PAR, PopulationSolution.Growth(:,a),'filled')
+        hold on
+    end
+        legend('MED4','AS9601','GP2','Location','northeastoutside');
+else
+    plot(CruiseData.PAR, PopulationSolution.Growth,'.k','MarkerSize',20)
+end
+xlabel('PAR [umol m-2 s-1]')
+ylabel('Growth rate [h^-^1]')
+set(gca,'FontSize',20);
+
+fileName = strcat(runPath,'/Figures/Growth/BGS_PAR_mu.eps');
 saveas(fig,fileName,'epsc');
 
 
