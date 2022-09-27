@@ -4,12 +4,12 @@
 %% Load data
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_200826';                         
+runID = 'BGS_220923g';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
 FullSolution = FullSolution_L2;
-
+load(strcat(runPath,'/data/output/Options.mat'))
 %% Parse out Gridding, CruiseData, FileNames, and PanGEM from FullSolution
 Gridding = FullSolution.Gridding;
 CruiseData = FullSolution.CruiseData;
@@ -18,7 +18,7 @@ PanGEM = FullSolution.PanGEM;
 %% Retrieve solutions for population at each sample point
 [PopulationSolution] = parseBGSSolutions(FullSolution);
 %% Gridded domain
-x = CruiseData.Lat(Gridding.stationsVec2);
+x = CruiseData.Lat;
 y = Gridding.depthVec;
 
 %% Assign strains to ecotypes
@@ -45,28 +45,39 @@ BOF_components = [{'DNA'},{'Lipid'},{'Carbohydrate'},{'Protein'},{'VitaCofactors
 % 
 mkdir(strcat(runPath,'/Figures/BOF'))
 Cruise_names = Gridding.Cruise;
-
 % Plot Protein % against PAR
 fig = figure;
-x =  CruiseData.PAR(Gridding.stationsVec2,:)';
+x =  CruiseData.PAR';
 y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
-gscatter(x,y,Cruise_names)
-set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
+pointsize = 10;
+% set(gca,'XScale','log')
 ylabel('Protein Fraction')
 xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
 set(gca,'FontSize',20)
 fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Protfrac.eps');
 saveas(fig,fileName,'epsc');
 
-
 % Plot Carb % against PAR
 fig = figure;
-x =  CruiseData.PAR(Gridding.stationsVec2,:)';
+x =  CruiseData.PAR';
 y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
-gscatter(x,y,Cruise_names)
-set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
+pointsize = 10;
+% set(gca,'XScale','log')
 ylabel('Carbohydrate Fraction')
-%xlabel('E_d(474) / E_d(450)')
 xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
 set(gca,'FontSize',20)
 fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Carbfrac.eps');
@@ -74,10 +85,16 @@ saveas(fig,fileName,'epsc');
 
 % Plot Lipid % against PAR
 fig = figure;
-x =  CruiseData.PAR(Gridding.stationsVec2,:)';
+x =  CruiseData.PAR';
 y = squeeze(PopulationSolution.BOF_coefs(:,2,:))';
-gscatter(x,y,Cruise_names)
-set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
+% set(gca,'XScale','log')
 ylabel('Lipid Fraction')
 %xlabel('E_d(474) / E_d(450)')
 xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
@@ -88,13 +105,16 @@ saveas(fig,fileName,'epsc');
 % Plot % Nucleic Acid against Latitude
 fig = figure;
 Nuc_acid = PopulationSolution.BOF_coefs(:,1,:) + PopulationSolution.BOF_coefs(:,6,:);
-x =  CruiseData.Lat(Gridding.stationsVec2)';
+x =  CruiseData.Lat';
 y = squeeze(Nuc_acid)';
-gscatter(x,y,Cruise_names)
-%set(gca,'YScale','log')
-% set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
 ylabel('Nucleic Acid Fraction')
-%xlabel('E_d(474) / E_d(450)')
 xlabel('Latitude')
 set(gca,'FontSize',20)
 fileName = strcat(runPath,'/Figures/BOF/BGS_Lat_Nucacidfrac.eps');
@@ -103,9 +123,15 @@ saveas(fig,fileName,'epsc');
 % Plot % Nucleic Acid against Phosphate
 fig = figure;
 Nuc_acid = PopulationSolution.BOF_coefs(:,1,:) + PopulationSolution.BOF_coefs(:,6,:);
-x =  CruiseData.Orthophosphate(Gridding.stationsVec2)';
+x =  CruiseData.Orthophosphate'./1000;
 y = squeeze(Nuc_acid)';
-gscatter(x./1e3,y,Cruise_names)
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
 %set(gca,'YScale','log')
 % set(gca,'XScale','log')
 ylabel('Nucleic Acid Fraction')
@@ -116,9 +142,15 @@ saveas(fig,fileName,'epsc');
 
 % Plot Lipid:Protein against Temperature
 fig = figure;
-x =  CruiseData.T(Gridding.stationsVec2,:)';
+x =  CruiseData.T';
 y = squeeze(PopulationSolution.BOF_coefs(:,2,:)./PopulationSolution.BOF_coefs(:,4,:))';
-gscatter(x,y,Cruise_names)
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
 ylabel('Lipid:Protein')
 xlabel('Temperature')
 set(gca,'FontSize',20)
@@ -127,11 +159,17 @@ saveas(fig,fileName,'epsc');
 
 % Plot Lipid:Protein against Total dissolved N
 fig = figure;
-tot_N = CruiseData.Ammonium(Gridding.stationsVec2,:)' + ...
-    CruiseData.NitratePlusNitrite(Gridding.stationsVec2,:)'
-x =  tot_N';
+tot_N = CruiseData.Ammonium' + ...
+    CruiseData.NitratePlusNitrite';
+x =  tot_N'./1000;
 y = squeeze(PopulationSolution.BOF_coefs(:,2,:)./PopulationSolution.BOF_coefs(:,4,:))';
-gscatter(x./1e3,y,Cruise_names)
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
 set(gca,'XScale','log')
 ylabel('Lipid:Protein')
 xlabel('DIN (uM)')
@@ -141,16 +179,58 @@ saveas(fig,fileName,'epsc');
 
 % Plot Carb:Protein against Total dissolved N
 fig = figure;
-tot_N = CruiseData.Ammonium(Gridding.stationsVec2,:)' + ...
-    CruiseData.NitratePlusNitrite(Gridding.stationsVec2,:)'
-x =  tot_N';
+tot_N = CruiseData.Ammonium' + ...
+    CruiseData.NitratePlusNitrite'
+x =  tot_N'./1000;
 y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
-gscatter(x./1e3,y,Cruise_names)
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
 set(gca,'XScale','log')
 ylabel('Carb:Protein')
 xlabel('DIN (uM)')
 set(gca,'FontSize',20)
 fileName = strcat(runPath,'/Figures/BOF/BGS_DIN_CarbProt.eps');
+saveas(fig,fileName,'epsc');
+
+% Plot Carb:Protein against DIP
+fig = figure;
+x =  CruiseData.Orthophosphate'./1000;
+y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
+set(gca,'XScale','log')
+ylabel('Carb:Protein')
+xlabel('DIP (uM)')
+set(gca,'FontSize',20)
+fileName = strcat(runPath,'/Figures/BOF/BGS_DIP_CarbProt.eps');
+saveas(fig,fileName,'epsc');
+
+% Plot Carb:Protein against PAR
+fig = figure;
+x =  CruiseData.PAR';
+y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled');
+    hold on 
+end
+if ~Options.samplespecific
+    legend('MED4','AS9601','GP2');
+end
+set(gca,'XScale','log')
+ylabel('Carb:Protein')
+xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+set(gca,'FontSize',20)
+fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_CarbProt.eps');
 saveas(fig,fileName,'epsc');
 
 %% Determine elemental quotas and enthalpy for each strain, ecotype, and population for
