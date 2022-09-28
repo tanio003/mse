@@ -5,12 +5,15 @@
 
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923g';                         
+runID = 'BGS_220923f';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
 FullSolution = FullSolution_L2;
 load(strcat(runPath,'/data/output/Options.mat'))
+if ~Options.samplespecific
+    load(strcat(runPath,'/data/GEM/strainList.mat'));
+end
 %% Parse out Gridding, CruiseData, FileNames, and PanGEM from FullSolution
 Gridding = FullSolution.Gridding;
 CruiseData = FullSolution.CruiseData;
@@ -25,8 +28,8 @@ y = Gridding.depthVec;
 %% Latitude versus production,growth rate at surface
 mkdir(strcat(runPath,'/Figures/Growth'))
 if ~Options.samplespecific
-    prodInt = zeros(Gridding.nStations,3);
-    for a = 1:3;
+    prodInt = zeros(Gridding.nStations,size(strList,1));
+    for a = 1:size(strList,1);
         zVec = Gridding.depthVec;
         % prodVec = 1e3 .* PopulationSolution.Fluxes(:,a,find(strcmp('R00024',FullSolution.PanGEM.rxns))); % mol m-3 h-1
         prodVec = PopulationSolution.Fluxes(:,find(strcmp('R00024',FullSolution.PanGEM.rxns)),a); % mmol m-3 h-1
@@ -50,11 +53,11 @@ end
 % latitude versus GPP 
 fig = figure
 if ~Options.samplespecific
-    for a = 1:3;
+    for a = 1:size(strList,1);
         scatter(CruiseData.Lat, prodInt(:,a),'filled')
         hold on
     end
-    legend('MED4','AS9601','GP2','Location','northeastoutside');
+    legend(strList,'Location','northeastoutside');
 else
     plot(CruiseData.Lat, prodInt,'.k','MarkerSize',20)
 end
@@ -68,11 +71,11 @@ saveas(fig,fileName,'epsc');
 % latitude versus Growth rate
 fig = figure
 if ~Options.samplespecific
-    for a = 1:3;
+    for a = 1:size(strList,1)
         scatter(CruiseData.Lat, PopulationSolution.Growth(:,a),'filled')
         hold on
     end
-        legend('MED4','AS9601','GP2','Location','northeastoutside');
+    legend(strList,'Location','northeastoutside');
 else
     plot(CruiseData.Lat, PopulationSolution.Growth,'.k','MarkerSize',20)
 end
@@ -86,11 +89,11 @@ saveas(fig,fileName,'epsc');
 % GPP versus Growth Rate 
 fig = figure
 if ~Options.samplespecific
-    for a = 1:3;
+    for a = 1:size(strList,1)
         scatter(prodInt(:,a), PopulationSolution.Growth(:,a),'filled')
         hold on
     end
-    legend('MED4','AS9601','GP2','Location','northeastoutside');
+    legend(strList,'Location','northeastoutside');
 else
     plot(prodInt, PopulationSolution.Growth,'.k','MarkerSize',20)
 end
@@ -104,11 +107,11 @@ saveas(fig,fileName,'epsc');
 % PAR versus Growth rate
 fig = figure
 if ~Options.samplespecific
-    for a = 1:3;
+    for a = 1:size(strList,1)
         scatter(CruiseData.PAR, PopulationSolution.Growth(:,a),'filled')
         hold on
     end
-        legend('MED4','AS9601','GP2','Location','northeastoutside');
+    legend(strList,'Location','northeastoutside');
 else
     plot(CruiseData.PAR, PopulationSolution.Growth,'.k','MarkerSize',20)
 end
