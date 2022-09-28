@@ -34,8 +34,8 @@ close all
 runID = 'BGS_200826c';         
 % Sample specific GEM (y/n)?
 % If yes, only the specific GEM created from the metagenome at a specific
-% location will be used. If no, all the reference GEMs will be used instead
-% of metagenome-derived GEMs
+% location will be used. If no, the reference GEMs in "data/GEM/strainList.mat" 
+% will be used instead of metagenome-derived GEMs
 Sample_specific = {'y'};
 
 % Ecotype abundance weighted parameterization (y/n)?
@@ -82,7 +82,7 @@ FileNames.StrMod_Path = strcat(rootPath,'/data/GEM/StrMod.mat');
 % Current metagenome sample models
 FileNames.SampleMod_Path = strcat(rootPath,'/data/BioGOSHIP/SampleMod_Merged_',alpha_level,'.mat');
 % List of strains to be analyzed
-FileNames.strainList_Path = strcat(rootPath,'/data/db/strainList.mat');
+FileNames.strainList_Path = strcat(runPath,'/data/GEM/strainList.mat');
 % List of metagenome samples to be analyzed
 FileNames.sampleList_Path = strcat(rootPath,'/data/BioGOSHIP/sampleList.mat');
 % Current OGTDat
