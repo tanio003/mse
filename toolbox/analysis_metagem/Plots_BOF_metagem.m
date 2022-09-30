@@ -4,16 +4,15 @@
 %% Load data
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923h';                         
+runID = 'BGS_220923f';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
 FullSolution = FullSolution_L2;
 load(strcat(runPath,'/data/output/Options.mat'))
-
-%% Add mse core tool box to the path
-toolboxPath = '/Users/tatsurotanioka/Desktop/Project/mse/toolbox';
-addpath(genpath(toolboxPath));
+if ~Options.samplespecific
+    load(strcat(runPath,'/data/GEM/strainList.mat'));
+end
 %% Parse out Gridding, CruiseData, FileNames, and PanGEM from FullSolution
 Gridding = FullSolution.Gridding;
 CruiseData = FullSolution.CruiseData;
@@ -58,7 +57,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 pointsize = 10;
 % set(gca,'XScale','log')
@@ -77,7 +76,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 pointsize = 10;
 % set(gca,'XScale','log')
@@ -96,7 +95,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 % set(gca,'XScale','log')
 ylabel('Lipid Fraction')
@@ -116,7 +115,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 ylabel('Nucleic Acid Fraction')
 xlabel('Latitude')
@@ -134,7 +133,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 %set(gca,'YScale','log')
 % set(gca,'XScale','log')
@@ -153,7 +152,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 ylabel('Lipid:Protein')
 xlabel('Temperature')
@@ -172,7 +171,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 set(gca,'XScale','log')
 ylabel('Lipid:Protein')
@@ -192,7 +191,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 set(gca,'XScale','log')
 ylabel('Carb:Protein')
@@ -210,7 +209,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 set(gca,'XScale','log')
 ylabel('Carb:Protein')
@@ -228,7 +227,7 @@ for i = 1:size(y,1);
     hold on 
 end
 if ~Options.samplespecific
-    legend('MED4','AS9601','GP2');
+    legend(strList,'Location','northeastoutside');
 end
 set(gca,'XScale','log')
 ylabel('Carb:Protein')
