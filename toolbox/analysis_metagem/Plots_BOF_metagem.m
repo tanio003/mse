@@ -2,9 +2,8 @@
 % Contour plots of each BOF component for ecotypes and the population. 
 
 %% Load data
-%% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923f';                         
+runID = 'BGS_220923i';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
@@ -13,6 +12,10 @@ load(strcat(runPath,'/data/output/Options.mat'))
 if ~Options.samplespecific
     load(strcat(runPath,'/data/GEM/strainList.mat'));
 end
+
+%% Add mse core tool box to the path
+toolboxPath = '/Users/tatsurotanioka/Desktop/Project/mse/toolbox/core';
+addpath(genpath(toolboxPath));
 %% Parse out Gridding, CruiseData, FileNames, and PanGEM from FullSolution
 Gridding = FullSolution.Gridding;
 CruiseData = FullSolution.CruiseData;
@@ -182,8 +185,6 @@ saveas(fig,fileName,'epsc');
 
 % Plot Carb:Protein against Total dissolved N
 fig = figure;
-tot_N = CruiseData.Ammonium' + ...
-    CruiseData.NitratePlusNitrite'
 x =  tot_N'./1000;
 y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
 for i = 1:size(y,1);
@@ -229,7 +230,7 @@ end
 if ~Options.samplespecific
     legend(strList,'Location','northeastoutside');
 end
-set(gca,'XScale','log')
+% set(gca,'XScale','log')
 ylabel('Carb:Protein')
 xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
 set(gca,'FontSize',20)
@@ -245,18 +246,30 @@ saveas(fig,fileName,'epsc');
 % fileName = '/Users/jrcasey/Documents/MATLAB/CBIOMES/Data/Cheminformatics/Enthalpy_BOF/Enthalpy_BOF.csv'; 
 % EnthalpyDB = readtable(fileName,'Delimiter',',','ReadVariableNames',true);
 
+if ~Options.samplespecific
 % all strains
-% for i = 1:Gridding.nZ
-%     for j = 1:Gridding.nStations
-%         for k = 1:Gridding.nStr
-%             BOF_coefs = squeeze(StrainSolution.BOF_coefs(i,j,1:11,k));
-%             [MMComposition] = getMMElementalStoichiometry_Simulation(PanGEM,BOF_coefs);
-%             Quota(i,j,:,k) = sum(MMComposition.DW,1); % mmol element gDW-1
-%             BOF_coefs2 = squeeze(StrainSolution.BOF_coefs(i,j,:,k));
-%             % Enthalpy(i,j,k) = getBiomassEnthalpy(PanGEM,BOF_coefs2,EnthalpyDB); % KJ gDW-1
-%         end
-%     end
-% end
+     for j = 1:Gridding.nStations
+         for k = 1:Gridding.nStr
+             BOF_coefs = squeeze(PopulationSolution.BOF_coefs(j,1:11,k));
+             [MMComposition] = getMMElementalStoichiometry_Simulation(PanGEM,BOF_coefs);
+             Quota(j,:,k) = sum(MMComposition.DW,1); % mmol element gDW-1
+             BOF_coefs2 = squeeze(PopulationSolution.BOF_coefs(j,:,k));
+%             % Enthalpy(j,k) = getBiomassEnthalpy(PanGEM,BOF_coefs2,EnthalpyDB); % KJ gDW-1
+         end
+     end
+end
+
+if Options.samplespecific
+    % Metagenome-derived GEMs
+    for k = 1:Gridding.nStations
+        BOF_coefs = squeeze(PopulationSolution.BOF_coefs(1,1:11,k));
+        [MMComposition] = getMMElementalStoichiometry_Simulation(PanGEM,BOF_coefs);
+        QuotaPop(k,:) = sum(MMComposition.DW,1); % mmol element gDW-1
+        BOF_coefs2 = squeeze(PopulationSolution.BOF_coefs(1,:,k));
+        % Enthalpy(k) = getBiomassEnthalpy(PanGEM,BOF_coefs2,EnthalpyDB); % KJ gDW-1
+    end
+end
+
 % % ecotype winners
 % for i = 1:Gridding.nZ
 %     for j = 1:Gridding.nStations
@@ -280,220 +293,169 @@ saveas(fig,fileName,'epsc');
 %     end
 % end
 
+
+%% Calculating C:H:N:O:S:P (molar) and C:Chl (by mass) for population (metagenome-based) and for strain
 if Options.samplespecific
-    % Metagenome-derived GEMs
-    for k = 1:Gridding.nStr
-        BOF_coefs = squeeze(PopulationSolution.BOF_coefs(1,1:11,k));
-        [MMComposition] = getMMElementalStoichiometry_Simulation(PanGEM,BOF_coefs);
-        QuotaPop(k,:) = sum(MMComposition.DW,1); % mmol element gDW-1
-        BOF_coefs2 = squeeze(PopulationSolution.BOF_coefs(1,:,k));
-        % Enthalpy(i,j,k) = getBiomassEnthalpy(PanGEM,BOF_coefs2,EnthalpyDB); % KJ gDW-1
-    end
+    CN_Pop = squeeze(QuotaPop(:,1) ./ QuotaPop(:,3));
+    CP_Pop = squeeze(QuotaPop(:,1) ./ QuotaPop(:,5));
+    NP_Pop = squeeze(QuotaPop(:,3) ./ QuotaPop(:,5));
+    OP_Pop = squeeze(QuotaPop(:,4) ./ QuotaPop(:,5));
+    HP_Pop = squeeze(QuotaPop(:,2) ./ QuotaPop(:,5));
+    SP_Pop = squeeze(QuotaPop(:,6) ./ QuotaPop(:,5));
+    Cchl_Pop = (2.*1e-3.*12.011.* QuotaPop(:,1)) ./ (squeeze(PopulationSolution.BOF_coefs(1,12,:)) + squeeze(PopulationSolution.BOF_coefs(1,13,:))); 
+else
+    CN_Str = squeeze(Quota(:,1,:) ./ Quota(:,3,:));
+    CP_Str = squeeze(Quota(:,1,:) ./ Quota(:,5,:));
+    NP_Str = squeeze(Quota(:,3,:) ./ Quota(:,5,:));
+    OP_Str = squeeze(Quota(:,4,:) ./ Quota(:,5,:));
+    HP_Str = squeeze(Quota(:,2,:) ./ Quota(:,5,:));
+    SP_Str = squeeze(Quota(:,6,:) ./ Quota(:,5,:));
+    Cchl_Str = squeeze((2.*1e-3.*12.011.* Quota(:,1,:))) ./ (squeeze(PopulationSolution.BOF_coefs(:,12,:)) + squeeze(PopulationSolution.BOF_coefs(:,13,:))); 
 end
+%% Calculate the demands of aerobic remineralization (Paulmier et al., 2009, BG, 6(5) with Sulfur) for population (metagenome-based) and for strain
+if Options.samplespecific
+    O2P_Pop = (-1).* (CP_Pop + 0.25.*HP_Pop - 0.5.*OP_Pop - 0.75.*NP_Pop + 1.5.*SP_Pop + 1.25);
+    rsum_O2C_Pop = (-1).* O2P_Pop.*(1.0./CP_Pop);
+    r_O2C_Pop =  (-1).*(O2P_Pop - 2.0.*NP_Pop) .* (1.0./CP_Pop);
+else
+    O2P_Str = (-1).* (CP_Str + 0.25.*HP_Str - 0.5.*OP_Str - 0.75.*NP_Str + 1.5.*SP_Str + 1.25);
+    rsum_O2C_Str = (-1).* O2P_Str.*(1.0./CP_Str);
+    r_O2C_Str =  (-1).*(O2P_Str - 2.0.*NP_Str) .* (1.0./CP_Str);    
+end
+%% --- Plot C:N:P against env variables ---
 
-%% Calculating C:H:N:O:S:P (molar) and C:Chl (by mass)
-CN_Pop = QuotaPop(:,1) ./ QuotaPop(:,3);
-CP_Pop = QuotaPop(:,1) ./ QuotaPop(:,5);
-NP_Pop = QuotaPop(:,3) ./ QuotaPop(:,5);
-OP_Pop = QuotaPop(:,4) ./ QuotaPop(:,5);
-HP_Pop = QuotaPop(:,2) ./ QuotaPop(:,5);
-SP_Pop = QuotaPop(:,6) ./ QuotaPop(:,5);
-Cchl_Pop = (2.*1e-3.*12.011.* QuotaPop(:,1)) ./ (squeeze(PopulationSolution.BOF_coefs(1,12,:)) + squeeze(PopulationSolution.BOF_coefs(:,13,:))); 
-%% Calculate the demands of aerobic remineralization (Paulmier et al., 2009, BG, 6(5) with Sulfur)
-O2P_Pop = (-1).* (CP_Pop + 0.25.*HP_Pop - 0.5.*OP_Pop - 0.75.*NP_Pop + 1.5.*SP_Pop + 1.25);
-rsum_O2C_Pop = (-1).* O2P_Pop.*(1.0./CP_Pop);
-r_O2C_Pop =  (-1).*(O2P_Pop - 2.0.*NP_Pop) .* (1.0./CP_Pop);
-%% Plot population C:N against DIN
-
-% C:N vs DIN
+%% C:N vs DIN
 x = CruiseData.Nitrate(Gridding.stationsVec2,:)' + CruiseData.Nitrite(Gridding.stationsVec2,:)' + CruiseData.Ammonia(Gridding.stationsVec2,:)';
-% y = QuotaPop(:,:,1) ./ QuotaPop(:,:,3);
-y = CN_Pop;
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = CN_Pop';
+else
+    y = CN_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-set(hErr2,'LineStyle','none')
-hErr2.FaceAlpha = 0.2;
+for i = 1:size(y,1);
+    scatter(x./1000,y(i,:),'filled')
+    hold on
+end
 set(gca,'XScale','log')
 ylabel('C:N')
-%xlabel('E_d(474) / E_d(450)')
-xlabel('DIN [nM]')
+xlabel('DIN [uM]')
 set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
 
 fileName = strcat(runPath,'/Figures/BOF/CN_vs_DIN.eps');
 saveas(fig,fileName,'epsc');
 
-%% Plot population C:P against PO4
+%% Plot C:P against PO4
 x = CruiseData.Orthophosphate(Gridding.stationsVec2,:)';
-y = CP_Pop
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = CP_Pop';
+else
+    y = CP_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-set(hErr2,'LineStyle','none')
-hErr2.FaceAlpha = 0.2;
+for i = 1:size(y,1);
+    scatter(x./1000,y(i,:),'filled')
+    hold on
+end
 set(gca,'XScale','log')
 ylabel('C:P')
-%xlabel('E_d(474) / E_d(450)')
-xlabel('DIP [nM]')
+xlabel('DIP [uM]')
 set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
 
 fileName = strcat(runPath,'/Figures/BOF/CP_vs_DIP.eps');
 saveas(fig,fileName,'epsc');
 
-%% Plot population N:P against PO4
+%% Plot N:P against PO4
 x = CruiseData.Orthophosphate(Gridding.stationsVec2,:)';
-y = NP_Pop
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = NP_Pop';
+else
+    y = NP_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-set(hErr2,'LineStyle','none')
-hErr2.FaceAlpha = 0.2;
+for i = 1:size(y,1);
+    scatter(x./1000,y(i,:),'filled')
+    hold on
+end
 set(gca,'XScale','log')
 ylabel('N:P')
-%xlabel('E_d(474) / E_d(450)')
-xlabel('DIP [nM]')
+xlabel('DIP [uM]')
 set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
 
 fileName = strcat(runPath,'/Figures/BOF/NP_vs_DIP.eps');
 saveas(fig,fileName,'epsc');
 
-%% Plot population C:P against Temperature
+%% Plot C:P against Temperature
 x = CruiseData.T(Gridding.stationsVec2,:)';
-y = CP_Pop
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = CP_Pop';
+else
+    y = CP_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-% plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-% hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-% set(hErr2,'LineStyle','none')
-% hErr2.FaceAlpha = 0.2;
-% set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled')
+    hold on
+end
 ylabel('C:P')
-%xlabel('E_d(474) / E_d(450)')
 xlabel('Temperature [degC]')
+set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
 set(gca,'FontSize',20)
 
 fileName = strcat(runPath,'/Figures/BOF/CP_vs_T.eps');
 saveas(fig,fileName,'epsc'); 
 
-%% Plot Population rsum_O2C against Latitude
+%% Plot rsum_O2C against Latitude
 x = CruiseData.Lat(:,Gridding.stationsVec2)';
-y = rsum_O2C_Pop;
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = rsum_O2C_Pop';
+else
+    y = rsum_O2C_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-% plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-% hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-% set(hErr2,'LineStyle','none')
-% hErr2.FaceAlpha = 0.2;
-% set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled')
+    hold on
+end
 ylabel('r_{\Sigma-O2:C}')
-%xlabel('E_d(474) / E_d(450)')
 xlabel('Latitude')
 set(gca,'FontSize',20,'xdir','reverse')
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
+set(gca,'FontSize',20)
 
 fileName = strcat(runPath,'/Figures/BOF/rsumO2C_vs_Lat.eps');
 saveas(fig,fileName,'epsc'); 
-
-%% Plot Population rsum_O2C against DIN
+%% Plot rsum_O2C against DIN
 x = CruiseData.Nitrate(Gridding.stationsVec2,:)' + CruiseData.Nitrite(Gridding.stationsVec2,:)' + CruiseData.Ammonia(Gridding.stationsVec2,:)';
-y = rsum_O2C_Pop;
-xVec = reshape(x,size(x,1)*size(x,2),1);
-yVec = reshape(y,size(y,1)*size(y,2),1);
-[xVecAsc, xVecIdx] = sort(xVec,'ascend');
-yVecAsc = yVec(xVecIdx);
-xVecBinned = logspace(log10(min(xVec)),log10(max(xVec)),10);
-for a = 1:numel(xVecBinned)-1
-    inBinIdx= find(xVecAsc >= xVecBinned(a) & xVecAsc < xVecBinned(a+1));
-    yMean(a) = nanmean(yVecAsc(inBinIdx));
-    yStd(a) = nanstd(yVecAsc(inBinIdx));
+if Options.samplespecific
+    y = rsum_O2C_Pop';
+else
+    y = rsum_O2C_Str';
 end
-
 fig = figure;
-plot(x,y,'.k','MarkerSize',15)
-hold on
-% plot(xVecBinned(2:end),yMean,'-k','LineWidth',3);
-%hErr = errorbar(xVecBinned(2:end),yMean,yStd,'-r');
-% hErr2 = fill([xVecBinned(2:end) fliplr(xVecBinned(2:end))],[(yMean + yStd) fliplr(yMean - yStd)],'g');
-%set(hErr,'LineWidth',3)
-% set(hErr2,'LineStyle','none')
-% hErr2.FaceAlpha = 0.2;
-set(gca,'XScale','log')
+for i = 1:size(y,1);
+    scatter(x,y(i,:),'filled')
+    hold on
+end
 ylabel('r_{\Sigma-O2:C}')
-%xlabel('E_d(474) / E_d(450)')
-%xlabel('E_d(474) / E_d(450)')
 xlabel('DIN [nM]')
+set(gca,'XScale','log')
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
 set(gca,'FontSize',20)
 
 fileName = strcat(runPath,'/Figures/BOF/rsumO2C_vs_DIN.eps');
