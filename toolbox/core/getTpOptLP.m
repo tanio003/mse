@@ -5,8 +5,10 @@ SA = 4.* pi() .* ((1e-6 .* StrMod.rInit).^2); % m2
 A = [0 TpDat.A']; % m2 transporter area 
 b = Options.fmax.*SA; 
 x0 = [StrMod.rInit repmat(0.2,1,numel(TpDat.A))];
-xlb = [StrMod.rInit.*0.9 zeros(1,numel(TpDat.A))];
-xub = [StrMod.rInit.*1.1 (b ./ TpDat.A')];
+% xlb = [StrMod.rInit.*0.9 zeros(1,numel(TpDat.A))];
+% xub = [StrMod.rInit.*1.1 (b ./ TpDat.A')];
+xlb = [StrMod.rInit.*(1.0-Options.rfactor) zeros(1,numel(TpDat.A))];
+xub = [StrMod.rInit.*(1.0+Options.rfactor) (b ./ TpDat.A')];
 
 options = optimoptions('fmincon','ConstraintTolerance',1e-3,'MaxIterations',Options.maxIter_TpOpt);
 options.StepTolerance = Options.stepTol_TpOpt;

@@ -315,12 +315,12 @@ end
 %% Calculate the demands of aerobic remineralization (Paulmier et al., 2009, BG, 6(5) with Sulfur) for population (metagenome-based) and for strain
 if Options.samplespecific
     O2P_Pop = (-1).* (CP_Pop + 0.25.*HP_Pop - 0.5.*OP_Pop - 0.75.*NP_Pop + 1.5.*SP_Pop + 1.25);
-    rsum_O2C_Pop = (-1).* O2P_Pop.*(1.0./CP_Pop);
-    r_O2C_Pop =  (-1).*(O2P_Pop - 2.0.*NP_Pop) .* (1.0./CP_Pop);
+    r_O2C_Pop = (-1).* O2P_Pop.*(1.0./CP_Pop);
+    rsum_O2C_Pop =  (-1).*(O2P_Pop - 2.0.*NP_Pop) .* (1.0./CP_Pop);
 else
     O2P_Str = (-1).* (CP_Str + 0.25.*HP_Str - 0.5.*OP_Str - 0.75.*NP_Str + 1.5.*SP_Str + 1.25);
-    rsum_O2C_Str = (-1).* O2P_Str.*(1.0./CP_Str);
-    r_O2C_Str =  (-1).*(O2P_Str - 2.0.*NP_Str) .* (1.0./CP_Str);    
+    r_O2C_Str = (-1).* O2P_Str.*(1.0./CP_Str);
+    rsum_O2C_Str =  (-1).*(O2P_Str - 2.0.*NP_Str) .* (1.0./CP_Str);   
 end
 %% --- Plot C:N:P against env variables ---
 
@@ -415,20 +415,64 @@ set(gca,'FontSize',20)
 
 fileName = strcat(runPath,'/Figures/BOF/CP_vs_T.eps');
 saveas(fig,fileName,'epsc'); 
+%% Plot C:P against % Nucleic acid
+x = squeeze(Nuc_acid)';
+if Options.samplespecific
+    y = CP_Pop';
+else
+    y = CP_Str';
+end
+fig = figure;
+for i = 1:size(y,1);
+    scatter(x(i,:).*100,y(i,:),'filled')
+    hold on
+end
+ylabel('C:P')
+xlabel('% Nuc acid')
+set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
+set(gca,'FontSize',20)
 
-%% Plot rsum_O2C against Latitude
+fileName = strcat(runPath,'/Figures/BOF/CP_vs_Nucacid.eps');
+saveas(fig,fileName,'epsc'); 
+
+%% Plot C:N against % Protein
+x = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+if Options.samplespecific
+    y = CN_Pop';
+else
+    y = CN_Str';
+end
+fig = figure;
+for i = 1:size(y,1);
+    scatter(x(i,:).*100,y(i,:),'filled')
+    hold on
+end
+ylabel('C:N')
+xlabel('% Protein')
+set(gca,'FontSize',20)
+if ~Options.samplespecific
+    legend(strList,'Location','northeastoutside');
+end
+set(gca,'FontSize',20)
+
+fileName = strcat(runPath,'/Figures/BOF/CN_vs_Protein.eps');
+saveas(fig,fileName,'epsc'); 
+%% Plot r_O2C against Latitude
 x = CruiseData.Lat(:,Gridding.stationsVec2)';
 if Options.samplespecific
-    y = rsum_O2C_Pop';
+    y = r_O2C_Pop';
 else
-    y = rsum_O2C_Str';
+    y = r_O2C_Str';
 end
 fig = figure;
 for i = 1:size(y,1);
     scatter(x,y(i,:),'filled')
     hold on
 end
-ylabel('r_{\Sigma-O2:C}')
+ylabel('r_{-O2:C}')
 xlabel('Latitude')
 set(gca,'FontSize',20,'xdir','reverse')
 if ~Options.samplespecific
@@ -436,21 +480,21 @@ if ~Options.samplespecific
 end
 set(gca,'FontSize',20)
 
-fileName = strcat(runPath,'/Figures/BOF/rsumO2C_vs_Lat.eps');
+fileName = strcat(runPath,'/Figures/BOF/rO2C_vs_Lat.eps');
 saveas(fig,fileName,'epsc'); 
-%% Plot rsum_O2C against DIN
+%% Plot r_O2C against DIN
 x = CruiseData.Nitrate(Gridding.stationsVec2,:)' + CruiseData.Nitrite(Gridding.stationsVec2,:)' + CruiseData.Ammonia(Gridding.stationsVec2,:)';
 if Options.samplespecific
-    y = rsum_O2C_Pop';
+    y = r_O2C_Pop';
 else
-    y = rsum_O2C_Str';
+    y = r_O2C_Str';
 end
 fig = figure;
 for i = 1:size(y,1);
     scatter(x,y(i,:),'filled')
     hold on
 end
-ylabel('r_{\Sigma-O2:C}')
+ylabel('r_{-O2:C}')
 xlabel('DIN [nM]')
 set(gca,'XScale','log')
 if ~Options.samplespecific
@@ -458,7 +502,7 @@ if ~Options.samplespecific
 end
 set(gca,'FontSize',20)
 
-fileName = strcat(runPath,'/Figures/BOF/rsumO2C_vs_DIN.eps');
+fileName = strcat(runPath,'/Figures/BOF/rO2C_vs_DIN.eps');
 saveas(fig,fileName,'epsc'); 
 %% C:N vs DIN again, but with all strains, ecotypes, and population
 % ecotypeColors = varycolor(numel(ecotypeList));

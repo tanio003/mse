@@ -31,11 +31,11 @@ close all
 %% Basic Setup
 % Modify these options for your particular run experiments
 
-runID = 'BGS_200826c';         
+runID = 'BGS_220923j';         
 % Sample specific GEM (y/n)?
 % If yes, only the specific GEM created from the metagenome at a specific
-% location will be used. If no, the reference GEMs in "data/GEM/strainList.mat" 
-% will be used instead of metagenome-derived GEMs
+% location will be used. If no, all the reference GEMs will be used instead
+% of metagenome-derived GEMs
 Sample_specific = {'y'};
 
 % Ecotype abundance weighted parameterization (y/n)?
@@ -45,13 +45,13 @@ Sample_specific = {'y'};
 Ecotype_weighted = {'y'};
 
 % Set the Cruises to include (keep those to include)
-Cruises_select = {'I09N','P18','AE1319','AE1319','BVAL46','NH1418','AMT28','I07N','C13.5'};
-% Cruises_select = {'I09N', 'I07N'}
+Cruises_select = {'I09N','P18','AE1319','BVAL46','NH1418','AMT28','I07N','C13.5'};
+% Cruises_select = {'C13.5'}
 
 % set the confidence model (90%, 95%, 99%)
 % alpha_level = 'alpha90';
-% alpha_level = 'alpha95';
-alpha_level = 'alpha99';
+alpha_level = 'alpha95';
+% alpha_level = 'alpha99';
 %% Change directory
 % change this path to where you have MSE installed
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
@@ -132,6 +132,7 @@ Options.stepTol_TpOpt = 1e-8; % step tolerance for TpOpt algorithm
 
 Options.fmax = 0.085; % maximum coverage of cell surface area by transporters (proportion; see Casey and Follows, 2020 Plos CompBio)
 
+Options.rfactor = 0.1; % Range in variability of radius from initial value (default = 0.1 = 10%)
 %% Gridding (save a copy of this to the server)
 
 Gridding = struct;
@@ -190,6 +191,9 @@ IrrDat = IrrDat_BioGOSHIP;
 IrrDat3 = reshape([IrrDat2{:}],numel(Gridding.depthVec),numel(Gridding.lambdaVec),numel(IrrDat2));
 CruiseData.IrrDat = IrrDat3;
 CruiseData.PAR = squeeze(nansum(IrrDat3,2));
+
+CruiseData.IrrDat = CruiseData.IrrDat.*0.10;
+CruiseData.PAR = CruiseData.PAR.*0.10;
 
 %% Parse sample GEM models and save to data/GEM/StrMod/ folder
 load(FileNames.StrMod_Path);

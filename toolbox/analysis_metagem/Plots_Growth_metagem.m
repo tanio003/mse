@@ -5,7 +5,7 @@
 
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923f';                         
+runID = 'BGS_220923h';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
