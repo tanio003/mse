@@ -13,12 +13,13 @@
 
 %% Directory
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_200826';                         
+runID = 'BGS_221114a';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 % Make sure the alphalevels are consistent with the run 
-% Options are: 'alpha90','alpha95','alpha99'
-alpha_level = 'alpha95';
+% Options are: 'alpha90','alpha95','alpha99', 'top910',
+% 'top920','top930','top940','top950'
+alpha_level = 'top930';
 %% Load compiled results (from compile_BGS_subjobs.m)
 % These files are generated in BatchSetup.m
 cd(runPath)
@@ -198,6 +199,16 @@ if Options.samplespecific
         StrMod = SampleMod_Merged_alpha90;
     elseif strcmp(alpha_level,'alpha99');
         StrMod = SampleMod_Merged_alpha99;
+    elseif strcmp(alpha_level,'top910');
+        StrMod = SampleMod_Merged_top910;
+    elseif strcmp(alpha_level,'top920');
+        StrMod = SampleMod_Merged_top920;
+    elseif strcmp(alpha_level,'top930');
+        StrMod = SampleMod_Merged_top930;
+    elseif strcmp(alpha_level,'top940');
+        StrMod = SampleMod_Merged_top940;
+    elseif strcmp(alpha_level,'top950');
+        StrMod = SampleMod_Merged_top950;
     end
 else
     load('/Users/tatsurotanioka/Desktop/Project/mse/data/GEM/StrMod.mat');

@@ -31,7 +31,7 @@ close all
 %% Basic Setup
 % Modify these options for your particular run experiments
 
-runID = 'BGS_220923j';         
+runID = 'BGS_221114a';         
 % Sample specific GEM (y/n)?
 % If yes, only the specific GEM created from the metagenome at a specific
 % location will be used. If no, all the reference GEMs will be used instead
@@ -48,10 +48,15 @@ Ecotype_weighted = {'y'};
 Cruises_select = {'I09N','P18','AE1319','BVAL46','NH1418','AMT28','I07N','C13.5'};
 % Cruises_select = {'C13.5'}
 
-% set the confidence model (90%, 95%, 99%)
+% set the confidence model (90%, 95%, 99%) ot (top910,920,930,940,950 KOs)
 % alpha_level = 'alpha90';
-alpha_level = 'alpha95';
+% alpha_level = 'alpha95';
 % alpha_level = 'alpha99';
+% alpha_level = 'top910';
+% alpha_level = 'top920';
+alpha_level = 'top930';
+% alpha_level = 'top940';
+% alpha_level = 'top950';
 %% Change directory
 % change this path to where you have MSE installed
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
@@ -94,7 +99,7 @@ FileNames.IrrDat_fileName = strcat(rootPath,'/data/BioGOSHIP/IrrDat_BioGOSHIP.ma
 % TpDat path
 FileNames.TpDat_fileName = strcat(rootPath,'/data/db/TpDat.csv');
 % PhysOpt and PigOpt constraints path
-FileNames.PhysOptPigOptConstraints_fileName = strcat(rootPath,'/data/db/BOFConstraints.csv');
+FileNames.PhysOptPigOptConstraints_fileName = strcat(runPath,'/data/BOFConstraints.csv');
 % PigDB path
 FileNames.PigDB_fileName = strcat(rootPath,'/data/db/AbsorptionDatabase.csv');
 
@@ -132,7 +137,7 @@ Options.stepTol_TpOpt = 1e-8; % step tolerance for TpOpt algorithm
 
 Options.fmax = 0.085; % maximum coverage of cell surface area by transporters (proportion; see Casey and Follows, 2020 Plos CompBio)
 
-Options.rfactor = 0.1; % Range in variability of radius from initial value (default = 0.1 = 10%)
+Options.rfactor = 0.3; % Range in variability of radius from initial value (default = 0.1 = 10%)
 %% Gridding (save a copy of this to the server)
 
 Gridding = struct;
@@ -190,10 +195,19 @@ IrrDat = IrrDat_BioGOSHIP;
 [IrrDat2] = standardizeIrr(IrrDat,Gridding.stationsVec, Gridding.lambdaVec,Gridding.depthVec); %mmoles photons m-2 h-1 bandwidth*nm-1
 IrrDat3 = reshape([IrrDat2{:}],numel(Gridding.depthVec),numel(Gridding.lambdaVec),numel(IrrDat2));
 CruiseData.IrrDat = IrrDat3;
-CruiseData.PAR = squeeze(nansum(IrrDat3,2));
+CruiseData.PAR = squeeze(nansum(IrrDat3,2));  % mmoles photons m-2 h-1 
 
-CruiseData.IrrDat = CruiseData.IrrDat.*0.10;
-CruiseData.PAR = CruiseData.PAR.*0.10;
+% Calculate MLD averaged Irradiance and PAR
+KDPAR = CruiseData.KDPAR_MODIS_OS_9km_8d;
+MLD = CruiseData.MLD_HYCOM_9km_8d;
+MLDIrr_factor = 1./(KDPAR.*MLD).*(1-exp(-1.*KDPAR.*MLD));
+
+CruiseData_IrrDat_MLD = squeeze(CruiseData.IrrDat).*MLDIrr_factor';
+CruiseData_IrrDat_MLD = reshape(CruiseData_IrrDat_MLD, 1,height(CruiseData_IrrDat_MLD),width(CruiseData_IrrDat_MLD));
+CruiseData_PAR_MLD = squeeze(nansum(CruiseData_IrrDat_MLD,2))';  
+
+CruiseData.IrrDat = CruiseData_IrrDat_MLD;
+CruiseData.PAR = CruiseData_PAR_MLD;
 
 %% Parse sample GEM models and save to data/GEM/StrMod/ folder
 load(FileNames.StrMod_Path);
@@ -208,6 +222,16 @@ for a = 1:Gridding.nStr
             StrMod = SampleMod_Merged_alpha95;
         elseif alpha_level == "alpha99"
             StrMod = SampleMod_Merged_alpha99;
+        elseif alpha_level == "top910"
+            StrMod = SampleMod_Merged_top910;            
+        elseif alpha_level == "top920"
+            StrMod = SampleMod_Merged_top920;      
+        elseif alpha_level == "top930"
+            StrMod = SampleMod_Merged_top930;               
+        elseif alpha_level == "top940"
+            StrMod = SampleMod_Merged_top940;   
+        elseif alpha_level == "top950"
+            StrMod = SampleMod_Merged_top950;  
         end
      end
      mod = StrMod.(strName);

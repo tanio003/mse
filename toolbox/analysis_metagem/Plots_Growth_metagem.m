@@ -5,7 +5,7 @@
 
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923h';                         
+runID = 'BGS_221114a';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
@@ -50,44 +50,8 @@ else
     end
 end
 
-% latitude versus GPP 
-fig = figure
-if ~Options.samplespecific
-    for a = 1:size(strList,1);
-        scatter(CruiseData.Lat, prodInt(:,a),'filled')
-        hold on
-    end
-    legend(strList,'Location','northeastoutside');
-else
-    plot(CruiseData.Lat, prodInt,'.k','MarkerSize',20)
-end
-xlabel('Latitude')
-ylabel('GPP [mmol C m^-^2 h^-^1]')
-set(gca,'FontSize',20);
-
-fileName = strcat(runPath,'/Figures/Growth/BGS_Lat_Prod_Integrated.eps');
-saveas(fig,fileName,'epsc');
-
-% latitude versus Growth rate
-fig = figure
-if ~Options.samplespecific
-    for a = 1:size(strList,1)
-        scatter(CruiseData.Lat, PopulationSolution.Growth(:,a),'filled')
-        hold on
-    end
-    legend(strList,'Location','northeastoutside');
-else
-    plot(CruiseData.Lat, PopulationSolution.Growth,'.k','MarkerSize',20)
-end
-xlabel('Latitude')
-ylabel('Growth rate [h^-^1]')
-set(gca,'FontSize',20);
-
-fileName = strcat(runPath,'/Figures/Growth/BGS_Lat_mu.eps');
-saveas(fig,fileName,'epsc');
-
-% GPP versus Growth Rate 
-fig = figure
+%% GPP versus Growth Rate 
+fig = figure;
 if ~Options.samplespecific
     for a = 1:size(strList,1)
         scatter(prodInt(:,a), PopulationSolution.Growth(:,a),'filled')
@@ -104,24 +68,92 @@ set(gca,'FontSize',20);
 fileName = strcat(runPath,'/Figures/Growth/BGS_Prod_mu.eps');
 saveas(fig,fileName,'epsc');
 
-% PAR versus Growth rate
-fig = figure
-if ~Options.samplespecific
-    for a = 1:size(strList,1)
-        scatter(CruiseData.PAR, PopulationSolution.Growth(:,a),'filled')
-        hold on
+%% Growth rate versus Lat, DIN, DIP, PAR, and Temp, radius %% 
+fig = figure;
+subplot(3,2,1) % Latitude
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(CruiseData.Lat, PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(CruiseData.Lat, PopulationSolution.Growth,'.','MarkerSize',10)
     end
-    legend(strList,'Location','northeastoutside');
-else
-    plot(CruiseData.PAR, PopulationSolution.Growth,'.k','MarkerSize',20)
-end
-xlabel('PAR [umol m-2 s-1]')
-ylabel('Growth rate [h^-^1]')
-set(gca,'FontSize',20);
+    xlabel('Latitude')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);
+subplot(3,2,2) % PAR
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(CruiseData.PAR', PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(CruiseData.PAR', PopulationSolution.Growth,'.','MarkerSize',10)
+    end
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);
+subplot(3,2,3) % DIN
+tot_N = CruiseData.Ammonium' + ...
+    CruiseData.NitratePlusNitrite';
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(tot_N'./1000, PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(tot_N'./1000, PopulationSolution.Growth,'.','MarkerSize',10)
+    end
+    xlabel('DIN [\mu mol/kg]')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);
+subplot(3,2,4) % DIP
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(CruiseData.Orthophosphate'./1000, PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(CruiseData.Orthophosphate'./1000, PopulationSolution.Growth,'.','MarkerSize',10)
+    end
+    xlabel('DIP [\mu mol/kg]')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);    
+subplot(3,2,5) % Temp
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(CruiseData.T', PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(CruiseData.T', PopulationSolution.Growth,'.','MarkerSize',10)
+    end
+    xlabel('Temperature [deg C]')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);        
+subplot(3,2,6) % Radius
+    if ~Options.samplespecific
+        for a = 1:size(strList,1)
+            scatter(PopulationSolution.r_opt', PopulationSolution.Growth(:,a),'filled')
+            hold on
+        end
+        legend(strList,'Location','northeastoutside');
+    else
+        plot(PopulationSolution.r_opt', PopulationSolution.Growth,'.','MarkerSize',10)
+    end
+    xlabel('Radius [\mu m]')
+    ylabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12);     
 
-fileName = strcat(runPath,'/Figures/Growth/BGS_PAR_mu.eps');
-saveas(fig,fileName,'epsc');
-
+fileName = strcat(runPath,'/Figures/Growth/BGS_EnvParams_mu.eps');
+saveas(fig,fileName,'epsc');    
+    
 
 %% Assign strains to ecotypes
 % orgDatabase = readtable('GitHub/mse_AMT/data/db/orgDatabase.csv','Delimiter',',','ReadVariableNames',true);

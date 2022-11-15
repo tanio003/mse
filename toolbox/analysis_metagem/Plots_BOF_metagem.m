@@ -3,7 +3,7 @@
 
 %% Load data
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_220923i';                         
+runID = 'BGS_221114a';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 load(strcat(runPath,'/data/output/FullSolution_L2.mat'))
@@ -51,191 +51,254 @@ BOF_components = [{'DNA'},{'Lipid'},{'Carbohydrate'},{'Protein'},{'VitaCofactors
 % 
 mkdir(strcat(runPath,'/Figures/BOF'))
 Cruise_names = Gridding.Cruise;
-% Plot Protein % against PAR
-fig = figure;
-x =  CruiseData.PAR';
-y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-pointsize = 10;
-% set(gca,'XScale','log')
-ylabel('Protein Fraction')
-xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Protfrac.eps');
-saveas(fig,fileName,'epsc');
-
-% Plot Carb % against PAR
-fig = figure;
-x =  CruiseData.PAR';
-y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-pointsize = 10;
-% set(gca,'XScale','log')
-ylabel('Carbohydrate Fraction')
-xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Carbfrac.eps');
-saveas(fig,fileName,'epsc');
-
-% Plot Lipid % against PAR
-fig = figure;
-x =  CruiseData.PAR';
-y = squeeze(PopulationSolution.BOF_coefs(:,2,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-% set(gca,'XScale','log')
-ylabel('Lipid Fraction')
-%xlabel('E_d(474) / E_d(450)')
-xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Lipidfrac.eps');
-saveas(fig,fileName,'epsc');
-
-% Plot % Nucleic Acid against Latitude
-fig = figure;
 Nuc_acid = PopulationSolution.BOF_coefs(:,1,:) + PopulationSolution.BOF_coefs(:,6,:);
-x =  CruiseData.Lat';
-y = squeeze(Nuc_acid)';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-ylabel('Nucleic Acid Fraction')
-xlabel('Latitude')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_Lat_Nucacidfrac.eps');
-saveas(fig,fileName,'epsc');
+% --- Fig 1 = PAR vs Macros --- %
+fig1 = figure;
+subplot(2,2,1) % Plot Protein % against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    ylabel('Protein Fraction')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Carb % against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % ylim([0.2, 0.4])
+    ylabel('Carbohydrate Fraction')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Lipid + Cell wall vs PAR    
+    x =  CruiseData.PAR'./3600*1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+        squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    ylabel('Lipid + Cell wall Fraction')
+    set(gca,'FontSize',12)
+subplot(2,2,4) % Chla against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,12,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('Chla Fraction')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)
+fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_Macrofrac.eps');
+saveas(fig1,fileName,'epsc');
 
-% Plot % Nucleic Acid against Phosphate
-fig = figure;
-Nuc_acid = PopulationSolution.BOF_coefs(:,1,:) + PopulationSolution.BOF_coefs(:,6,:);
-x =  CruiseData.Orthophosphate'./1000;
-y = squeeze(Nuc_acid)';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-%set(gca,'YScale','log')
-% set(gca,'XScale','log')
-ylabel('Nucleic Acid Fraction')
-xlabel('Phosphate (uM)')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_Phosphate_Nucacidfrac.eps');
-saveas(fig,fileName,'epsc');
-
-% Plot Lipid:Protein against Temperature
-fig = figure;
-x =  CruiseData.T';
-y = squeeze(PopulationSolution.BOF_coefs(:,2,:)./PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-ylabel('Lipid:Protein')
-xlabel('Temperature')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_Temp_LipProt.eps');
-saveas(fig,fileName,'epsc');
-
-% Plot Lipid:Protein against Total dissolved N
-fig = figure;
+% --- Fig 2 = DIN vs Macros --- %
+fig2 = figure;
 tot_N = CruiseData.Ammonium' + ...
     CruiseData.NitratePlusNitrite';
-x =  tot_N'./1000;
-y = squeeze(PopulationSolution.BOF_coefs(:,2,:)./PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'XScale','log')
-ylabel('Lipid:Protein')
-xlabel('DIN (uM)')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_DIN_LipProt.eps');
-saveas(fig,fileName,'epsc');
 
-% Plot Carb:Protein against Total dissolved N
-fig = figure;
-x =  tot_N'./1000;
-y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'XScale','log')
-ylabel('Carb:Protein')
-xlabel('DIN (uM)')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_DIN_CarbProt.eps');
-saveas(fig,fileName,'epsc');
+subplot(2,2,1) % Plot Protein % against DIN
+    x =  tot_N'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Protein % ')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Carb against DIN
+    x =  tot_N'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Carb % ')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Lipid + Cell wall vs DIN
+    x =  tot_N'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+       squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    % y = squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Lipid + Cell wall %')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,4) % Nucleic acid (RNA) vs DIN
+    x =  tot_N'./1000;
+    % y = squeeze(Nuc_acid)';
+    y = squeeze(PopulationSolution.BOF_coefs(:,6,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('RNA %')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+fileName = strcat(runPath,'/Figures/BOF/BGS_DIN_Macrofrac.eps');   
+saveas(fig2,fileName,'epsc');
 
-% Plot Carb:Protein against DIP
-fig = figure;
-x =  CruiseData.Orthophosphate'./1000;
-y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'XScale','log')
-ylabel('Carb:Protein')
-xlabel('DIP (uM)')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_DIP_CarbProt.eps');
-saveas(fig,fileName,'epsc');
+% --- Fig 3 = DIP vs Macros --- %
+fig3 = figure;
 
-% Plot Carb:Protein against PAR
-fig = figure;
-x =  CruiseData.PAR';
-y = squeeze(PopulationSolution.BOF_coefs(:,3,:)./PopulationSolution.BOF_coefs(:,4,:))';
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled');
-    hold on 
-end
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-% set(gca,'XScale','log')
-ylabel('Carb:Protein')
-xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
-set(gca,'FontSize',20)
-fileName = strcat(runPath,'/Figures/BOF/BGS_PAR_CarbProt.eps');
-saveas(fig,fileName,'epsc');
+subplot(2,2,1) % Plot Protein % against DIP
+    x =  CruiseData.Orthophosphate'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Protein % ')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot Carb % against DIP
+    y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Carb % ')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)    
+subplot(2,2,3) % Lipid + Cell wall vs DIP
+    x =  CruiseData.Orthophosphate'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+        squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('Lipid + Cell wall %')
+    xlabel('DIP (uM)')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Nucleic acid (RNA) vs DIP
+    x =  CruiseData.Orthophosphate'./1000;
+    y = squeeze(PopulationSolution.BOF_coefs(:,6,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'XScale','log')
+    ylabel('RNA %')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)   
+fileName = strcat(runPath,'/Figures/BOF/BGS_DIP_Macrofrac.eps');
+saveas(fig3,fileName,'epsc');    
+
+% --- Fig 4 = SST vs Macros --- 
+fig4 = figure;
+subplot(2,2,1) % Plot Protein % against Temp
+    x =  CruiseData.T';
+    y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('Protein %')
+    xlabel('Temperature')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot Carb % against Temp
+    x =  CruiseData.T';
+    y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('Carb %')
+    xlabel('Temperature')
+    set(gca,'FontSize',12)    
+subplot(2,2,3) % Plot Lipid + Cell wall against Temp    
+    x =  CruiseData.T';
+    y = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+            squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('Lipid + Cell wall %')
+    xlabel('Temperature')
+    set(gca,'FontSize',12)  
+subplot(2,2,4) % Plot Nucleic acid (RNA) vs Temp    
+    x =  CruiseData.T';
+    y = squeeze(PopulationSolution.BOF_coefs(:,6,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('RNA %')
+    xlabel('Temperature')
+    set(gca,'FontSize',12)  
+fileName = strcat(runPath,'/Figures/BOF/BGS_Temp_Macrofrac.eps');
+saveas(fig4,fileName,'epsc');      
 
 %% Determine elemental quotas and enthalpy for each strain, ecotype, and population for
 % each element. 
@@ -323,187 +386,704 @@ else
     rsum_O2C_Str =  (-1).*(O2P_Str - 2.0.*NP_Str) .* (1.0./CP_Str);   
 end
 %% --- Plot C:N:P against env variables ---
+% --- Fig 5 = PAR vs C:N:P:-O2 --- %
+fig5 = figure;
+subplot(2,2,1) % Plot C:P against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    ylabel('C:P')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot N:P against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    ylabel('N:P')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Plot C:N against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    ylabel('C:N')
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ against PAR
+    x =  CruiseData.PAR'./3600*1000;
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    xlabel('PAR [\mu mol quanta m^-^2 s^-^1]')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_PAR.eps');
+saveas(fig5,fileName,'epsc');    
 
-%% C:N vs DIN
-x = CruiseData.Nitrate(Gridding.stationsVec2,:)' + CruiseData.Nitrite(Gridding.stationsVec2,:)' + CruiseData.Ammonia(Gridding.stationsVec2,:)';
-if Options.samplespecific
-    y = CN_Pop';
-else
-    y = CN_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x./1000,y(i,:),'filled')
-    hold on
-end
-set(gca,'XScale','log')
-ylabel('C:N')
-xlabel('DIN [uM]')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
+% --- Fig 6 = DIN vs C:N:P:-O2 --- %
+fig6 = figure;
+subplot(2,2,1) % Plot C:P against DIN
+    x =  tot_N';
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot N:P against DIN
+    x =  tot_N';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Plot C:N against DIN
+    x =  tot_N';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('DIN [\mu mol/kg]')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ against DIN
+    x =  tot_N';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    xlabel('DIN [\mu mol/kg]')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_DIN.eps');
+saveas(fig6,fileName,'epsc');  
 
-fileName = strcat(runPath,'/Figures/BOF/CN_vs_DIN.eps');
-saveas(fig,fileName,'epsc');
+% --- Fig 7 = DIP vs C:N:P:-O2 --- %
+fig7 = figure;
+subplot(2,2,1) % Plot C:P against DIP
+    x = CruiseData.Orthophosphate';
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot N:P against DIP
+    x = CruiseData.Orthophosphate';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Plot C:N against DIP
+    x = CruiseData.Orthophosphate';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('DIP [\mu mol/kg]')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ against DIP
+    x = CruiseData.Orthophosphate';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x./1000,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    set(gca,'XScale','log')
+    xlabel('DIP [\mu mol/kg]')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_DIP.eps');
+saveas(fig7,fileName,'epsc');  
 
-%% Plot C:P against PO4
-x = CruiseData.Orthophosphate(Gridding.stationsVec2,:)';
-if Options.samplespecific
-    y = CP_Pop';
-else
-    y = CP_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x./1000,y(i,:),'filled')
-    hold on
-end
-set(gca,'XScale','log')
-ylabel('C:P')
-xlabel('DIP [uM]')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
+% --- Fig 8 = SST vs C:N:P:-O2 --- %
+fig8 = figure;
+subplot(2,2,1) % Plot C:P against SST
+    x = CruiseData.T';
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('Temperature [degC]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot N:P against SST
+    x = CruiseData.T';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('Temperature [degC]')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Plot C:N against SST
+    x = CruiseData.T';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('Temperature [degC]')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ against SST
+    x = CruiseData.T';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    xlabel('Temperature [degC]')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_Temp.eps');
+saveas(fig8,fileName,'epsc');  
 
-fileName = strcat(runPath,'/Figures/BOF/CP_vs_DIP.eps');
-saveas(fig,fileName,'epsc');
+% --- Fig 9 = Latitude vs C:N:P:-O2 --- %
+fig9 = figure;
+subplot(2,2,1) % Plot C:P against Lat
+    x = CruiseData.Lat';
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('Latitude')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Plot N:P against Lat
+    x = CruiseData.Lat';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('Latitude')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Plot C:N against Lat
+    x = CruiseData.Lat';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('Latitude')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ against Lat
+    x = CruiseData.Lat';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    xlabel('Lat')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_Lat.eps');
+saveas(fig9,fileName,'epsc');  
 
-%% Plot N:P against PO4
-x = CruiseData.Orthophosphate(Gridding.stationsVec2,:)';
-if Options.samplespecific
-    y = NP_Pop';
-else
-    y = NP_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x./1000,y(i,:),'filled')
-    hold on
-end
-set(gca,'XScale','log')
-ylabel('N:P')
-xlabel('DIP [uM]')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
+% --- Fig 10 = Macro vs C:N:P:-O2 --- %
+fig10 = figure;
+subplot(2,2,1) % C:P vs Nucleic acid (RNA)
+    x = squeeze(PopulationSolution.BOF_coefs(:,6,:))'
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x(i,:).*100,y(i,:),'filled')
+        hold on
+    end
+    ylabel('C:P')
+    xlabel('% RNA')
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'FontSize',12)
+subplot(2,2,2) % N:P vs Prot/Nucleic acid
+    x = squeeze(PopulationSolution.BOF_coefs(:,4,:))'./squeeze(Nuc_acid)';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x(i,:),y(i,:),'filled')
+        hold on
+    end
+    ylabel('N:P')
+    xlabel('Protein:Nucleic acid')
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'FontSize',12)    
+subplot(2,2,3) % C:N against % Protein
+    x = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x(i,:).*100,y(i,:),'filled')
+        hold on
+    end
+    ylabel('C:N')
+    xlabel('% Protein')
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'FontSize',12)
+subplot(2,2,4) %  RQ vs Lipid + Cell wall
+    x = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+            squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end        
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled')
+        hold on
+    end
+    ylabel('RQ')
+    xlabel('Lipid + Cell wall %')
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    set(gca,'FontSize',12)    
+fileName = strcat(runPath,'/Figures/BOF/Macro_vs_CNP.eps');
+saveas(fig10,fileName,'epsc'); 
 
-fileName = strcat(runPath,'/Figures/BOF/NP_vs_DIP.eps');
-saveas(fig,fileName,'epsc');
+%% Relationship between cell size and macros and C:N:P
+% --- Fig 11 = Cell size vs Macros --- %
+fig11 = figure;
+subplot(2,2,1) % Plot Protein % against cell size
+    x = PopulationSolution.r_opt';
+    y = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    ylabel('Protein Fraction')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % Carb against cell size
+    x = PopulationSolution.r_opt';
+    y = squeeze(PopulationSolution.BOF_coefs(:,3,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % ylim([0.2, 0.4])
+    ylabel('Carbohydrate Fraction')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % Lipid + Cell wall vs cell size  
+    x = PopulationSolution.r_opt';
+    y = squeeze(PopulationSolution.BOF_coefs(:,2,:))' + ...
+        squeeze(PopulationSolution.BOF_coefs(:,11,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    xlabel('cell radius (\mu m)')
+    ylabel('Lipid + Cell wall Fraction')
+    set(gca,'FontSize',12)
+subplot(2,2,4) % Chla against PAR
+    x = PopulationSolution.r_opt';
+    y = squeeze(PopulationSolution.BOF_coefs(:,12,:))';
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    ylabel('Chla Fraction')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)
+fileName = strcat(runPath,'/Figures/BOF/BGS_Radius_Macrofrac.eps');
+saveas(fig11,fileName,'epsc');
 
-%% Plot C:P against Temperature
-x = CruiseData.T(Gridding.stationsVec2,:)';
-if Options.samplespecific
-    y = CP_Pop';
-else
-    y = CP_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled')
-    hold on
-end
-ylabel('C:P')
-xlabel('Temperature [degC]')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'FontSize',20)
+% --- Fig 12 = Cell size vs. CNP --- %
+fig12 = figure;
+subplot(2,2,1) % C:P
+    x = PopulationSolution.r_opt';
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % N:P 
+    x = PopulationSolution.r_opt';
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)
+subplot(2,2,3) % C:N
+    x = PopulationSolution.r_opt';
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('cell radius (\mu m)')
+    set(gca,'FontSize',12)    
+subplot(2,2,4) % Plot RQ 
+    x = PopulationSolution.r_opt';
+    if Options.samplespecific
+        y = r_O2C_Pop';
+    else
+        y = r_O2C_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    xlabel('cell radius (\mu m)')
+    ylabel('RQ')
+    set(gca,'FontSize',12)      
+fileName = strcat(runPath,'/Figures/BOF/CNP_vs_Radius.eps');
+saveas(fig12,fileName,'epsc');  
 
-fileName = strcat(runPath,'/Figures/BOF/CP_vs_T.eps');
-saveas(fig,fileName,'epsc'); 
-%% Plot C:P against % Nucleic acid
-x = squeeze(Nuc_acid)';
-if Options.samplespecific
-    y = CP_Pop';
-else
-    y = CP_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x(i,:).*100,y(i,:),'filled')
-    hold on
-end
-ylabel('C:P')
-xlabel('% Nuc acid')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'FontSize',20)
+%% Relationship between growth rate and macromolecules , C:N:P
+% --- Fig 13 = Growth rate vs. CNP and macros--- %
+fig13 = figure;
+subplot(2,2,1) % C:P
+    x = PopulationSolution.Growth;
+    if Options.samplespecific
+        y = CP_Pop';
+    else
+        y = CP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:P')
+    xlabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12)
+subplot(2,2,2) % C:N
+    x = PopulationSolution.Growth;
+    if Options.samplespecific
+        y = CN_Pop';
+    else
+        y = CN_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('C:N')
+    xlabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12)    
+ subplot(2,2,3) % N:P
+    x = PopulationSolution.Growth;
+    if Options.samplespecific
+        y = NP_Pop';
+    else
+        y = NP_Str';
+    end
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('N:P')
+    xlabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12)      
+    
+subplot(2,2,4) % Nucleic acids (RNA)
+    x = PopulationSolution.Growth;
+    y = squeeze(PopulationSolution.BOF_coefs(:,6,:))'
+    for i = 1:size(y,1);
+        scatter(x,y(i,:),'filled');
+        hold on 
+    end
+    if ~Options.samplespecific
+        legend(strList,'Location','northeastoutside');
+    end
+    pointsize = 10;
+    % set(gca,'XScale','log')
+    ylabel('RNA %')
+    xlabel('Growth rate [h^-^1]')
+    set(gca,'FontSize',12)       
 
-fileName = strcat(runPath,'/Figures/BOF/CP_vs_Nucacid.eps');
-saveas(fig,fileName,'epsc'); 
+fileName = strcat(runPath,'/Figures/BOF/BGS_mu_CNP.eps');
+saveas(fig13,fileName,'epsc');    
 
-%% Plot C:N against % Protein
-x = squeeze(PopulationSolution.BOF_coefs(:,4,:))';
-if Options.samplespecific
-    y = CN_Pop';
-else
-    y = CN_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x(i,:).*100,y(i,:),'filled')
-    hold on
-end
-ylabel('C:N')
-xlabel('% Protein')
-set(gca,'FontSize',20)
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'FontSize',20)
-
-fileName = strcat(runPath,'/Figures/BOF/CN_vs_Protein.eps');
-saveas(fig,fileName,'epsc'); 
-%% Plot r_O2C against Latitude
-x = CruiseData.Lat(:,Gridding.stationsVec2)';
-if Options.samplespecific
-    y = r_O2C_Pop';
-else
-    y = r_O2C_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled')
-    hold on
-end
-ylabel('r_{-O2:C}')
-xlabel('Latitude')
-set(gca,'FontSize',20,'xdir','reverse')
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'FontSize',20)
-
-fileName = strcat(runPath,'/Figures/BOF/rO2C_vs_Lat.eps');
-saveas(fig,fileName,'epsc'); 
-%% Plot r_O2C against DIN
-x = CruiseData.Nitrate(Gridding.stationsVec2,:)' + CruiseData.Nitrite(Gridding.stationsVec2,:)' + CruiseData.Ammonia(Gridding.stationsVec2,:)';
-if Options.samplespecific
-    y = r_O2C_Pop';
-else
-    y = r_O2C_Str';
-end
-fig = figure;
-for i = 1:size(y,1);
-    scatter(x,y(i,:),'filled')
-    hold on
-end
-ylabel('r_{-O2:C}')
-xlabel('DIN [nM]')
-set(gca,'XScale','log')
-if ~Options.samplespecific
-    legend(strList,'Location','northeastoutside');
-end
-set(gca,'FontSize',20)
-
-fileName = strcat(runPath,'/Figures/BOF/rO2C_vs_DIN.eps');
-saveas(fig,fileName,'epsc'); 
 %% C:N vs DIN again, but with all strains, ecotypes, and population
 % ecotypeColors = varycolor(numel(ecotypeList));
 % fig = figure

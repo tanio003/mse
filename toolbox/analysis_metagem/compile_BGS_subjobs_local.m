@@ -3,7 +3,7 @@
 %% Directory
 
 rootPath = '/Users/tatsurotanioka/Desktop/Project/mse';
-runID = 'BGS_200826';                         
+runID = 'BGS_221114a';                         
 runPath = strcat(rootPath,'/run/',runID);
 addpath(genpath(runPath));
 
