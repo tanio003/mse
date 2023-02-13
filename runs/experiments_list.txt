@@ -1,0 +1,214 @@
+# experiments_list.txt
+
+--- Calculating irradiance as the MLD and testing to see macros are fine.
+221114a = 221008a with the MLPAR scheme, use top_930 genome model.
+221114b = Running with three of the the randomly generated GEMs (rnd1_Random_top930, rnd2_Random_top930, rnd3_Random_top930) with the same env condition as 221114b
+
+--- Reconsidering the effect of change cell size boundary. From the previous calibrations, macros are ok but the cell size is hitting towards the low threshold. What would be the effect of allowing more range in cell size?
+
+221008a = 220923z with radius tolerance of 30%
+221008e = 221007e with radius tolerance of 30% 
+221008f = 221007f with radius tolerance of 30% 
+221008g = 221007g with radius tolerance of 30% 
+
+--- Final tweaking: so far the best runs are 220923q and 220923z. 
+-> 220923q = (1) C:P and N:P too low, so reduce ub DNA & RNA to reduce P quota, (2) ro2:c is 1.06 and can increase a little more so increase cell wall ub and reduce lipid 
+-> 220923z = (1) ro2:c range is too small -> reduce carb ub so that lipid and cell wall takes overat low DIN. reduce the lb for cell wall to give more range at high DIN. 
+a
+
+221007a = 220923q as starting point 
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Cell wall: (3.1, 12.8) Casey lb, default ub + 5%
+
+Protein: (36.8, 49.3) 
+Lipid:   (8.23, 16.2) 
+CHO:     (16.7, 26.2) 
+
+221007b = 220923q as starting point -> Increase in rO2:C from 221007a due to increae in cell wall. But Carb % Maybe too low.
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Cell wall: (3.1, 17.8) Casey lb, default ub + 10%
+
+Protein: (36.8, 49.3) 
+Lipid:   (8.23, 16.2) 
+CHO:     (16.7, 26.2) 
+
+221007c = 220923z as starting point: ro2:C range is still too small. Did not increase cell wall% from 220923z. Increase in lipid not the cell wall caused by reduction in carbs.
+CHO: (13.5, 33.2) Casey lb, Casey ub - 10%
+Cell wall: (3.1, 17.8) = Casey lb, Casey ub + 10%
+
+221007d = exactly same as 221007b by mistake: 
+
+221007e = 220923z as starting point. Reduce Lipid ub by 5%, and increase cell wall ub by 5% 
+Lipid (8.23, 14.9) = Caseylb, Casey ub - 5%
+Cell wall: (3.1, 12.8) = Casey lb, Casey ub + 5%
+
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Protein: (42.0, 51.0) 
+CHO:     (13.5, 37.6) 
+
+221007f = 220923z as starting point. Reduce Lipid ub by 5%, and increase cell wall ub by 10%, Reduce CHO by 10% from Casey ub, Reduce DNA ub to 2.5%. 
+
+This is the best run so far. However, rO2:C is still not as variable.
+
+Lipid (8.23, 14.9) = Caseylb, Casey ub - 5%
+Cell wall: (3.1, 17.8) = Casey lb, Casey ub + 10%
+CHO:  (13.5, 33.2) = Casey lb, Casey ub - 10%
+DNA: (0.25, 2.0) Finkel Grand mean ub, Finkel T3 min lb for DNA grand mean
+
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+Protein: (42.0, 51.0) 
+
+221007g = 220923z as starting point. Reduce Lipid ub by 5%, and increase cell wall ub by 10%, Reduce CHO by 10% from Casey ub, Reduce DNA ub to 2.5%, Reduce Protein lb and ub by 5%... 
+
+N:P and C:P becomes too low by reducing protein and does not lead to significant increase in cell wall.
+
+Lipid (8.23, 14.9) = Caseylb, Casey ub - 5%
+Cell wall: (3.1, 17.8) = Casey lb, Casey ub + 10%
+CHO:  (13.5, 33.2) = Casey lb, Casey ub - 10%
+DNA: (0.25, 2.0) Finkel Grand mean ub, Finkel T3 min lb for DNA grand mean
+Protein: (37.0, 46.0) = Casey lb - 5%, Casey ub + 5% 
+
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+
+221007h = 221007f as starting point. Increase Lipid lb to Casey default lb. 
+Lipid (9.31, 13.5) = Caseylb, Casey lb carbs
+Cell wall: (3.1, 19.9) = Casey lb, Casey ub + 12% = Casey lipid ub
+CHO:  (13.5, 31.2) = Casey lb, Casey ub - 12%
+
+DNA: (0.25, 2.0) Finkel Grand mean ub, Finkel T3 min lb for DNA grand mean
+Protein: (42.0, 51.0) Casey Default
+RNA: (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+
+
+--- Test runs for biochemical constraints number 7: Use Casey as a starting point. Reduce % Carb and % lipid ub and, reduce % lipid lb and increase % Cell wall lb and ub. RNA and DNA lb = 0.25. 
+
+Protein: (42,51) -> (42,51) Casey
+Lipid: (9.3, 19.9) -> (8.23, 16.2) Finkel T3 Cyano ub and lb
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (1.9, 3.7) -> (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Cell wall: (3.1, 7.8) -> (4.17, 13.4) Adding reduction of Carb ub to Cell wall ub and reduction of lipid lb to Cell wall lb
+
+BGS_220923z: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 6: Use Casey as a starting point. Reduce % Carb and % lipid ub and increase % Cell wall ub. RNA and DNA lb = 0.25. 
+
+Protein: (42,51) -> (42,51) Casey
+Lipid: (9.3, 19.9) -> (9.3, 16.2) Casey lb + Finkel T3 Cyano ub
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (1.9, 3.7) -> (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Cell wall: (3.1, 7.8) -> (3.1, 13.4) Adding reduction of Carb ub to Cell wall ub   
+
+BGS_220923y: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 5: Use Casey as a starting point. Reduce % Carb ub and increase % Cell wall ub. RNA and DNA lb = 0.25. 
+
+Protein: (42,51) -> (42,51) Casey
+Lipid: (9.3, 19.9) -> (9.3, 19.9) Casey
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0.25, 4.5) Casey ub, Finkel T3 min lb for DNA grand mean
+DNA: (1.9, 3.7) -> (0.25, 3.7) Casey ub, Finkel T3 min lb for DNA grand mean
+Cell wall: (3.1, 7.8) -> (3.1, 13.4) Adding reduction of Carb ub to Cell wall ub   
+
+BGS_220923x: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 4: Use Supplementary Table from Finkel et al. 2016 and select max and min X. Macro for Cyanbacteria.
+C:P is good/little too high. RNA of 0.2-0.25 would be perfect. rO2:C is still a little too low but the primary driver is cell wall, not lipid.
+
+Protein: (42,51) -> (42,51) Casey
+Lipid: (9.3, 19.9) -> (9.3, 19.9) Casey
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0, 4.5) Casey ub, Finkel T3 min lb for Haptophyta and Ochrophyta
+DNA: (1.9, 3.7) -> (0.19, 3.7) Casey ub, Finkel T3 min lb for Haptophyta
+CHla: (1.2, 3.55) -> (1.2, 3.55) Casey   
+
+BGS_220923w: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 4: Use Supplementary Table from Finkel et al. 2016 and select max and min X. Macro for Cyanbacteria
+Protein: (42,51) -> (42,51) Casey
+Lipid: (9.3, 19.9) -> (9.3, 24.4) Casey lb + Finkel Table 2 Microalgae ub
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0, 4.5) Casey ub, Finkel T3 min lb for Haptophyta and Ochrophyta
+DNA: (1.9, 3.7) -> (0.19, 3.7) Casey ub, Finkel T3 min lb for Haptophyta
+CHla: (1.2, 3.55) -> (1.2, 3.55) Casey   
+
+BGS_220923v: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 3: Use Supplementary Table from Finkel et al. 2016 and select max and min X. Macro for Cyanbacteria
+Protein: (42,51) -> (36.8,49.3) Finnkel Table 3 Cyano lb + ub
+Lipid: (9.3, 19.9) -> (9.3, 24.4) Casey lb + Finkel Table 2 Microalgae ub
+CHO: (13.5, 43.2) -> (13.5, 37.6) Casey lb + Finkel TS1 Cyano ub
+RNA: (0.8, 4.5) -> (0.0, 4.5) Casey ub, Finkel T3 min lb for Haptophyta and Ochrophyta 
+DNA: (1.9, 3.7) -> (0.19, 3.7) Casey ub, Finkel T3 min lb for Haptophyta
+CHla: (1.2, 3.55) -> (0.54, 3.55) Casey ub, Finkel T3 min lb for Cyanobacteria   
+BGS_220923u: 10% PAR, radius range 10% (default)
+
+--- Test runs for biochemical constraints number 2, Use 95% credible interval of Cyanobacteria Table 3 from Finkel et al., 2016, Plos One, 11(5) for lb and ub for protein, lipid, carbs, Chla. For RNA and DNA used the lb and ub from Table 3 Grand mean but set lb to 0.25 for RNA (same as DNA). For the rest use default Casey values. For carb cell wall and carbs are separate so to avoid overestimation used much lowe values of Finkel. This paramterization ensures Pro:Carb > 1, Pro:Lip > 1, and Carb:Lip > 1.
+
+CHO, Lipid, and Chla are all hitting the upper threshold. % Nucleic is still a little too high at its minimum. C:P max is 206. 
+
+Protein: (42,51) -> (36.8, 49.3) Table 3 Finkel Cyano
+Lipid: (9.3, 19.9) -> (8.23, 16.2) Table 3 Finkel Cyano
+CHO: (13.5, 43.2) -> (16.7, 26.2) Table 3 Finkel Cyano
+RNA: (0.8, 4.5) -> (0.25, 6.96) Table 3 Grand Mean Finkel for ub. lb same as DNA
+DNA: (1.9, 3.7) -> (0.25, 2.0) Table 3 Finkel Grand Mean
+CHla: (1.2, 3.55) -> (0.54, 1.4) Table 3 Finkel Cyano
+
+BGS_220923t: 5% PAR, radius range 30%,            Finkel T3 macro, light is too low to give any variability
+BGS_220923s: 5% PAR, radius range 10% (default),  Finkel T3 macro, light is too low to give any variability
+BGS_220923r: 10% PAR, radius range 30%,           Finkel T3 macro, not good run
+BGS_220923q: 10% PAR, radius range 10% (default), Finkel T3 macro
+
+--- Test runs for the biochemical constraints. Use 95% credible interval of Cyanobacteria Table 3 from Finkel et al., 2016, Plos One, 11(5) to expand lb and ub for protein, lipid, carbs, RNA, Chla. and DNA.
+- Comment: % Carb still too high, C:P is high but not high enough.
+Protein: (42,51) -> (36.8, 51)
+Lipid: (9.3, 19.9) -> (8.23, 19,9)
+CHO: (13.5, 43.2) -> (13.5, 43.2)
+RNA: (0.8, 4.5) -> (0.8, 10.1)
+DNA: (1.9, 3.7) -> (0.63, 4.7)
+CHla: (1.2, 3.55) -> (0.54, 3.55)
+BGS_220923p: 5% PAR, radius range 30%,            Finkel T3 macro
+BGS_220923o: 5% PAR, radius range 10% (default),  Finkel T3 macro
+BGS_220923n: 10% PAR, radius range 30%,           Finkel T3 macro
+BGS_220923m: 10% PAR, radius range 10% (default), Finkel T3 macro
+--- Test runs for the radius tolerance level (default = 10% but increasing to higher tolearnce to allow smaller cells. Observed cell radius range = 0.25 to 0.35 um). Smaller cell leads to higher protein and lower lipid % leading to lower C:N and C:P.
+BGS_220923l: Running all BGS with BGS-metagenomes with PAR reduced to 10%. Control run, radius range 10% (lb = 0.315 um, ub = 0.385 um). Results identical to 220923h.
+BGS_220923k: Running all BGS with BGS-metagenomes with PAR reduced to 10%. Increasing radius range to 30% (lb = 0.245, ub = 0.455 um).
+BGS_220923j: Running all BGS with BGS-metagenomes with PAR reduced to 10%. Increasing radius range from default 10% to 15% (lb = 0.2975, ub = 0.4025 um).
+---
+BGS_220923i: Running all BGS with 3 ref genomes (MED4, AS9601, GP)  with PAR reduced to 10%.
+BGS_220923h: Running all BGS with BGS-metagenomes with PAR reduced to 10%. Success.
+--- From 220923f and 220923g, we don't need nutrients to be artificially high. It is mostly PAR that's driving changes in macromolecules.   
+BGS_220923g: As in 220923d but using observed nutrient concs. Use metagenome-derived GEMs. Sample_specific = {'y'}; Ecotype_weighted = {'y'}; 
+BGS_220923f: As in 220923d but using observed nutrient concs. Use reference genomes AS9601 and GP. 
+--- From 220923d and 220923e, we need PAR to be <10% of the surface value. (< 300-400 umol m-2 s-1]   
+BGS_220923e: As in 220923c but by reducing PAR to 5%. To test whether high carb% can be reduced from static 34%. Comment: as in d, % Carbs and %protein. 
+BGS_220923d: As in 220923c but by reducing PAR to 10%. To test whether high carb% can be reduced from static 34%. Comment: % Carbs and % Protein are linearly dependent on Light. 
+BGS_220923c: As in 220923c but by reducing PAR by 1/3. To test whether high carb% can be reduced from static 34%. Comment: It does reduce in some areas where DIP and DIN are quite high but large majority of data points still fixed at constant % macros.
+BGS_220923b: As in 220923a but Sample_specific = {'n'}; Use C13.5 data points for 3 reference genomes MED4 (HLI), AS9601 (HLII), GP2 (HLII). Comment: AS9601 and GP2 can diverge quite a lot under high nutrient conditions. 
+BGS_220923: Test run with mock env Nitrate and Nitrite data (except for light) + GEM from metagenomes (alpha95) at the same sample point. Nitrate+Nitrite at or below 0.01 is replaced with random number between 0 and 1 and Nitrite at 5% of Nitrate+Nitrite. 
+    Sample_specific = {'y'}; Ecotype_weighted = {'n'}; 
+
+
+
+BGS_200827: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha95) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'n'}; 
+BGS_200827b: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha90) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'n'}; 
+BGS_200827c: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha99) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'n'}; 
+
+BGS_200826: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha95) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'y'}; 
+BGS_200826b: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha90) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'y'}; 
+BGS_200826c: Test run with all Bio-GO-SHIP env data + GEM from metagenomes (alpha99) at the same sample point,
+    Sample_specific = {'y'}; Ecotype_weighted = {'y'}; 
+
+BGS_200823: Test run with I09 environmental data + reference genomes (TODO- check & make sure analysis files work)
+
+
